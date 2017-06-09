@@ -288,11 +288,11 @@ class Particle(object):
 
     def has_movement_y(self):
         """Retorna si tiene movimiento en el eje Y"""
-        return self.boolvel[0]
+        return self.boolvel[1]
 
     def has_movement_z(self):
         """Retorna si tiene movimiento en el eje Z"""
-        return self.boolvel[0]
+        return self.boolvel[2]
 
     def start(self):
         """Activa todos los movimientos"""
