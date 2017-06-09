@@ -46,7 +46,7 @@ cubo1.set_name("Cubo1")
 
 
 # nivel
-level = Level("maps/basic")
+level = Level("maps/basic.json")
 tilemap = level.get_tilemap()
 
 print "Main loop start"
