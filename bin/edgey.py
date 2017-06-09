@@ -9,7 +9,8 @@ from pygltoolbox.figures import *
 from pygltoolbox.materials import *
 from pygltoolbox.textures import *
 from pygltoolbox.shader import *
-from level_manager import *
+from level_manager import Level
+from edgey_camera import EdgeyCamera
 
 # constants
 AXES_LENGTH = 700
@@ -26,12 +27,12 @@ initPygame(WINDOW_SIZE[0], WINDOW_SIZE[1], "Edgey", centered=True)
 initGl()
 glutInit()
 reshape(*WINDOW_SIZE)
-    
+
 clock = pygame.time.Clock()
 
 # objetos
 axes = create_axes(AXES_LENGTH)
-camera = CameraR(CAMERA_RAD, CAMERA_PHI, CAMERA_THETA)
+camera = EdgeyCamera()
 
 cubo = Particle(posz=100.0)
 cubo.add_property("GLLIST", create_cube())
@@ -51,6 +52,7 @@ tilemap = level.get_tilemap()
 print "Main loop start"
 while(True):
     clock.tick(FPS)
+    clearBuffer()
     camera.place()
 
     glCallList(axes)
@@ -68,5 +70,19 @@ while(True):
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
+
+        if event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                exit()
+            if event.key == K_s:
+                print str(camera)
+            if event.key == K_q:
+                print "rotating camera"
+                camera.gradual_rotateLeft()
+            if event.key == K_e:
+                print "rotating camera"
+                camera.gradual_rotateRight()
+
+    camera.update()
 
     pygame.display.flip()
