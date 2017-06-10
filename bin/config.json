@@ -2,5 +2,8 @@
 	"camera": {
 		"rot_frames": 15,
 		"rot_angle": 90
+	},
+	"config": {
+		"light": 1
 	}
 }

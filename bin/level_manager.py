@@ -44,6 +44,7 @@ class Level:
                         self.tilemap[row][column][level] = Particle(row * 40, column * 40, level * 40)
                         self.tilemap[row][column][level].add_property("GLLIST", create_cube())
                         self.tilemap[row][column][level].add_property("SIZE", [40, 40, 40])
+                        self.tilemap[row][column][level].add_property("MATERIAL", material_white_plastic)
                         self.tilemap[row][column][level].set_name("Tile")
 
     def get_tilemap(self):

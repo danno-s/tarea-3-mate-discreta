@@ -62,7 +62,7 @@ def material_copper(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
     glMaterialfv(face, GL_EMISSION, emission)
 
 
-def material_esmerald(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
+def material_emerald(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
     """Material de esmeralda"""
     glMaterialfv(face, GL_AMBIENT, [0.0215, 0.1745, 0.0215, 1.0])
     glMaterialfv(face, GL_DIFFUSE, [0.07568, 0.61424, 0.007568, 1.0])
