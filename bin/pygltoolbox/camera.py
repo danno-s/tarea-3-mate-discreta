@@ -240,8 +240,8 @@ class CameraXYZ(_Camera):
     def rotate_center_z(self, angle):
         """Rota la posición en el eje z"""
         rad = math.sqrt(self.pos.get_x() ** 2 + self.pos.get_y() ** 2)
-        self.pos.set_x(rad * cos(self.angle))
-        self.pos.set_y(rad * sin(self.angle))
+        self.pos.set_x(rad * cos(angle))
+        self.pos.set_y(rad * sin(angle))
 
     def far(self):
         """Aleja la posición de la cámara

@@ -1,22 +1,28 @@
 # coding:UTF-8
 
-from pygltoolbox.camera import *
 import json as json
-from pprint import pprint
+from pygltoolbox.camera import *
+from pygltoolbox.utils_math import *
 
 
 class EdgeyCamera():
-    def __init__(self):
+    def __init__(self, player):
         # load configuration from json file
         with open("config.json") as config_file:
             config = json.load(config_file)
 
-        self.camera_config = config["camera"]
+        camera_config = config["camera"]
+        constants = config["constants"]
 
-        self.frames = self.camera_config["rot_frames"]
-        self.angle = self.camera_config["rot_angle"]
+        self.frames = constants["rot_frames"]
+        self.angle = constants["rot_angle"]
+        radius = camera_config["radius"]
+        phi = camera_config["phi"]
+        theta = camera_config["theta"]
 
-        self.camera = CameraR(1700.0, 45, 56)
+        self.center = player
+
+        self.camera = CameraR(radius, phi, theta)
         self.counter = 0
         # boolean value: True means left, False means right
         self.direction = None

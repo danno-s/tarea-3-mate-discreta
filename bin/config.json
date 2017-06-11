@@ -1,9 +1,16 @@
 {
 	"camera": {
-		"rot_frames": 15,
-		"rot_angle": 90
+		"radius": 1500,
+		"phi": 45,
+		"theta": 60
 	},
-	"config": {
+	"settings": {
 		"light": 1
+	},
+	"constants": {
+		"side_length": 80,
+		"rot_frames": 15,
+		"rot_angle": 90,
+		"move_frames": 15
 	}
 }
