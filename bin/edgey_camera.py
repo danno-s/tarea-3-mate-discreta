@@ -20,7 +20,7 @@ class EdgeyCamera():
         self.phi = camera_config["phi"]
         self.theta = camera_config["theta"]
 
-        self.center = player
+        self.center = [player.get_x(), player.get_y(), player.get_z()]
 
         self.place()
 
@@ -51,12 +51,12 @@ class EdgeyCamera():
 
     def place(self):
         glLoadIdentity()
-        gluLookAt(self.radius * sin(self.theta) * cos(self.phi) + self.center.get_x(),
-                  self.radius * sin(self.theta) * sin(self.phi) + self.center.get_y(),
-                  self.radius * cos(self.theta) + self.center.get_z(),
-                  self.center.get_x(),
-                  self.center.get_y(),
-                  self.center.get_z(),
+        gluLookAt(self.radius * sin(self.theta) * cos(self.phi) + self.center[0],
+                  self.radius * sin(self.theta) * sin(self.phi) + self.center[1],
+                  self.radius * cos(self.theta) + self.center[2],
+                  self.center[0],
+                  self.center[1],
+                  self.center[2],
                   0, 0, 1)
 
     def __str__(self):

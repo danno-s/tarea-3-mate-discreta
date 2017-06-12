@@ -2,9 +2,7 @@
 
 # imports
 import json as json
-from pygltoolbox.figures import *
-from pygltoolbox.materials import *
-from pygltoolbox.particles import *
+from presets import BasicTile
 from pygltoolbox.utils_geometry import *
 
 
@@ -40,10 +38,10 @@ class Level:
                     if cell == 0:
                         continue
                     elif abs(cell) == 1:
-                        self.tilemap[row][column][level] = Particle(row * side_length, column * side_length, level * side_length)
-                        self.tilemap[row][column][level].add_property("GLLIST", create_cube())
-                        self.tilemap[row][column][level].add_property("SIZE", [side_length / 2, side_length / 2, side_length / 2])
-                        self.tilemap[row][column][level].add_property("MATERIAL", material_silver)
+                        self.tilemap[row][column][level] = BasicTile(row,
+                                                                column,
+                                                                level,
+                                                                side_length)
                         if cell == -1:
                             self.tilemap[row][column][level].set_name("Spawn")
                         else:
@@ -55,10 +53,4 @@ class Level:
             for column, j in enumerate(self.tilemap[row]):
                 for height, z in enumerate(self.tilemap[row][column]):
                     if self.tilemap[row][column][height] is not None:
-                        self.tilemap[row][column][height].exec_property_func("MATERIAL")
-                        draw_list(self.tilemap[row][column][height].get_property("GLLIST"),
-                                  self.tilemap[row][column][height].get_position_list(),
-                                  0,
-                                  None,
-                                  self.tilemap[row][column][height].get_property("SIZE"),
-                                  None)
+                        self.tilemap[row][column][height].draw()

@@ -3,13 +3,12 @@
 # imports
 import json as json
 from level_manager import Level
-from presets.player import Player
+from presets import Player
 from edgey_camera import EdgeyCamera
 from pygltoolbox.glpython import *
 from pygltoolbox.opengl_lib import *
 
 # constants
-AXES_LENGTH = 700
 FPS = 60
 NUM_LIGHTS = 2
 WINDOW_SIZE = [1280, 720]
@@ -40,6 +39,8 @@ player.place(level)
 
 camera = EdgeyCamera(player)
 
+axes = create_axes(10000)
+
 
 print "Main loop started"
 
@@ -56,8 +57,6 @@ while(True):
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 exit()
-            elif event.key == K_s:
-                print str(camera)
             elif event.key == K_q:
                 camera.gradual_rotateLeft()
             elif event.key == K_e:
@@ -73,8 +72,9 @@ while(True):
 
     keys = pygame.key.get_pressed()
 
-    if keys[K_w]:
-        player.figure.move_x(1)
+    glDisable(GL_LIGHTING)
+    glCallList(axes)
+    glEnable(GL_LIGHTING)
 
     # actualiza camara
     camera.update()
@@ -90,4 +90,5 @@ while(True):
 
     # dibuja modelos
     player.draw()
+
     pygame.display.flip()
