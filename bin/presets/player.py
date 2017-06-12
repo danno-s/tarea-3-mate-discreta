@@ -46,8 +46,14 @@ class Player():
             self.figure.rotate_z(self.rot_spd)
             self.counter -= 1
 
-    def get_pos(self):
-        return self.figure.position
+    def get_x(self):
+        return self.figure.get_x()
+
+    def get_y(self):
+        return self.figure.get_y()
+
+    def get_z(self):
+        return self.figure.get_z()
 
     def draw(self):
         self.figure.exec_property_func("MATERIAL")
