@@ -31,7 +31,7 @@ config = config_dict["settings"]
 clock = pygame.time.Clock()
 
 # nivel
-level = Level("maps/stairs.json")
+level = Level("maps/bowl.json")
 
 # crea y ubica al jugador en el nivel
 player = Player()
