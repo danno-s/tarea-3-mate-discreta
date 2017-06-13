@@ -9,8 +9,9 @@
 	},
 	"constants": {
 		"side_length": 80,
-		"rot_frames": 15,
+		"rot_frames": 10,
 		"rot_angle": 90,
-		"move_frames": 15
+		"move_frames": 10,
+		"gravity": 5
 	}
 }

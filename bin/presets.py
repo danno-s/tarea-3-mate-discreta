@@ -14,8 +14,11 @@ class Player():
 
         self.move_frames = self.constants["move_frames"]
 
+        self.fall_speed = self.side_length / self.move_frames
+        self.falling = False
+        self.fall_counter = 0
         self.move_speed = 90 / self.move_frames
-        self.counter = 0
+        self.rot_counter = 0
         self.rot_spd = 0
         self.rot_progress = 0
         # booleano
@@ -42,11 +45,13 @@ class Player():
                             self.figure.set_z(tilemap[row][column][height].get_z() + self.side_length)
 
     def update(self):
-        self.figure.update()
-        if self.counter > 0:
-            self.counter -= 1
+        # animación de la rotación
+        if self.rot_counter > 0:
+            self.rot_counter -= 1
             self.rot_progress += self.rot_spd
-        if self.counter == 0:
+
+        # actualización de la posición al finalizar la rotación
+        if self.rot_counter == 0:
             self.rot_progress = 0
             if self.move_axis is not None and self.direction is not None:
                 if self.move_axis and self.direction:
@@ -60,6 +65,12 @@ class Player():
             self.move_axis = None
             self.direction = None
 
+        # caída si no hay bloques abajo
+        if self.fall_counter > 0:
+            self.add_z(-self.fall_speed)
+            self.fall_counter -= 1
+        elif self.fall_counter == 0:
+            self.falling = False
     def add_x(self, x):
         self.figure.set_x(self.get_x() + x)
 
@@ -78,8 +89,14 @@ class Player():
     def get_z(self):
         return self.figure.get_z()
 
+    def get_grid_coordinates(self):
+        height = self.get_z() / self.side_length
+        column = self.get_y() / self.side_length
+        row = self.get_x() / self.side_length
+        return [int(row), int(column), int(height)]
+
     def draw(self):
-        if self.counter > 0:
+        if self.rot_counter > 0:
             if self.move_axis and self.direction:
                 glTranslatef(self.get_x(),
                              self.get_y() - self.side_length / 2,
@@ -125,45 +142,40 @@ class Player():
                   self.figure.get_position_list(),
                   0, None, self.figure.get_property("SIZE"), None)
 
-    def move_up(self):
-        if self.move_axis is None or self.move_axis:
+    def move_neg_y(self):
+        if (self.move_axis is None or self.move_axis) and self.rot_counter == 0:
             self.move_axis = True
-            if not self.direction:
-                self.counter = self.move_frames - self.counter
-            else:
-                self.counter += self.move_frames
+            self.rot_counter += self.move_frames
             self.rot_spd = self.move_speed
             self.direction = True
 
-    def move_down(self):
-        if self.move_axis is None or self.move_axis:
+    def move_y(self):
+        if (self.move_axis is None or self.move_axis) and self.rot_counter == 0:
             self.move_axis = True
-            if self.direction:
-                self.counter = self.move_frames - self.counter
-            else:
-                self.counter += self.move_frames
+            self.rot_counter += self.move_frames
             self.rot_spd = -self.move_speed
             self.direction = False
 
-    def move_left(self):
-        if self.move_axis is None or not self.move_axis:
+    def move_x(self):
+        if (self.move_axis is None or not self.move_axis) and self.rot_counter == 0:
             self.move_axis = False
-            if not self.direction:
-                self.counter = self.move_frames - self.counter
-            else:
-                self.counter += self.move_frames
+            self.rot_counter += self.move_frames
             self.rot_spd = self.move_speed
             self.direction = True
 
-    def move_right(self):
-        if self.move_axis is None or not self.move_axis:
+    def move_neg_x(self):
+        if (self.move_axis is None or not self.move_axis) and self.rot_counter == 0:
             self.move_axis = False
-            if self.direction:
-                self.counter = self.move_frames - self.counter
-            else:
-                self.counter += self.move_frames
+            self.rot_counter += self.move_frames
             self.rot_spd = -self.move_speed
             self.direction = False
+
+    def fall(self):
+        self.fall_counter = self.move_frames
+        self.falling = True
+
+    def is_falling(self):
+        return self.falling
 
 
 class BasicTile:

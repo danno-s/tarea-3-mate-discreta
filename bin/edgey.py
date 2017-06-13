@@ -31,7 +31,7 @@ config = config_dict["settings"]
 clock = pygame.time.Clock()
 
 # nivel
-level = Level("maps/flat.json")
+level = Level("maps/stairs.json")
 
 # crea y ubica al jugador en el nivel
 player = Player()
@@ -49,6 +49,8 @@ while(True):
     clearBuffer()
     camera.place()
 
+    orientation = camera.get_orientation()
+
     # eventos
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -61,20 +63,59 @@ while(True):
                 camera.gradual_rotateLeft()
             elif event.key == K_e:
                 camera.gradual_rotateRight()
-            elif event.key == K_w:
-                player.move_up()
-            elif event.key == K_s:
-                player.move_down()
-            elif event.key == K_a:
-                player.move_left()
-            elif event.key == K_d:
-                player.move_right()
+
+            # relative movements
+            if not player.is_falling():
+                if orientation == 0:
+                    if event.key == K_w:
+                        player.move_neg_x()
+                    elif event.key == K_s:
+                        player.move_x()
+                    elif event.key == K_a:
+                        player.move_neg_y()
+                    elif event.key == K_d:
+                        player.move_y()
+                elif orientation == 1:
+                    if event.key == K_w:
+                        player.move_y()
+                    elif event.key == K_s:
+                        player.move_neg_y()
+                    elif event.key == K_a:
+                        player.move_neg_x()
+                    elif event.key == K_d:
+                        player.move_x()
+                elif orientation == 2:
+                    if event.key == K_w:
+                        player.move_x()
+                    elif event.key == K_s:
+                        player.move_neg_x()
+                    elif event.key == K_a:
+                        player.move_y()
+                    elif event.key == K_d:
+                        player.move_neg_y()
+                elif orientation == 3:
+                    if event.key == K_w:
+                        player.move_neg_y()
+                    elif event.key == K_s:
+                        player.move_y()
+                    elif event.key == K_a:
+                        player.move_x()
+                    elif event.key == K_d:
+                        player.move_neg_x()
 
     keys = pygame.key.get_pressed()
 
     glDisable(GL_LIGHTING)
     glCallList(axes)
     glEnable(GL_LIGHTING)
+
+    # lógica del nivel
+    player_coord = player.get_grid_coordinates()
+    if level.get_object_below(player_coord) is None:
+        player.fall()
+
+    if player_coord[2] <= 0:
+        print "player dead"
 
     # actualiza camara
     camera.update()

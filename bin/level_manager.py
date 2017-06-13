@@ -47,10 +47,19 @@ class Level:
                         else:
                             self.tilemap[row][column][level].set_name("Tile")
 
-
     def draw(self):
         for row, i in enumerate(self.tilemap):
             for column, j in enumerate(self.tilemap[row]):
                 for height, z in enumerate(self.tilemap[row][column]):
                     if self.tilemap[row][column][height] is not None:
-                        self.tilemap[row][column][height].draw()
+                    	self.tilemap[row][column][height].draw()
+
+    def get_object_below(self, coords):
+    	row = coords[0]
+    	column = coords[1]
+    	height = coords[2] - 1
+    	try:
+    		obj = self.tilemap[row][column][height]
+    	except IndexError:
+    		return None
+    	return obj
