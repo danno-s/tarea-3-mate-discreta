@@ -258,3 +258,27 @@ def material_natural_white(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
     glMaterialfv(face, GL_SPECULAR, [1, 1, 1, 1])
     glMaterialfv(face, GL_SHININESS, 128)
     glMaterialfv(face, GL_EMISSION, emission)
+
+
+def material_player_cube(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
+    glMaterialfv(face, GL_AMBIENT, [247.0/255, 173.0/255, 89.0/255, 1.0])
+    glMaterialfv(face, GL_DIFFUSE, [247.0/255, 173.0/255, 89.0/255, 1.0])
+    glMaterialfv(face, GL_SPECULAR, [247.0/255, 173.0/255, 89.0/255, 1.0])
+    glMaterialfv(face, GL_SHININESS, 128)
+    glMaterialfv(face, GL_EMISSION, emission)
+
+
+def material_tile_cube(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
+    glMaterialfv(face, GL_AMBIENT, [173./255, 179.0/255, 194.0/255, 1.0])
+    glMaterialfv(face, GL_DIFFUSE, [173./255, 179.0/255, 194.0/255, 1.0])
+    glMaterialfv(face, GL_SPECULAR, [173./255, 179.0/255, 194.0/255, 1.0])
+    glMaterialfv(face, GL_SHININESS, 128)
+    glMaterialfv(face, GL_EMISSION, emission)
+
+
+def material_shard(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
+    glMaterialfv(face, GL_AMBIENT, [247.0/255, 118.0/255, 38.0/255, 1.0])
+    glMaterialfv(face, GL_DIFFUSE, [247.0/255, 118.0/255, 38.0/255, 1.0])
+    glMaterialfv(face, GL_SPECULAR, [247.0/255, 118.0/255, 38.0/255, 1.0])
+    glMaterialfv(face, GL_SHININESS, 128)
+    glMaterialfv(face, GL_EMISSION, emission)

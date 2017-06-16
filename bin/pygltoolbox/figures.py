@@ -290,7 +290,7 @@ def loadGMSHModel(modelfile, scale, dx=0.0, dy=0.0, dz=0.0, avg=True,
 # noinspection PyBroadException
 def create_sphere(lat=10, lng=10, color=COLOR_WHITE):
     """Crea una esfera con latitud y longitud definidos de radio 1.0"""
-    if lat >= 3 and lng >= 10:
+    if lat >= 3 and lng >= 3:
         obj = glGenLists(1)
         glNewList(obj, GL_COMPILE)
         glPushMatrix()

@@ -22,6 +22,7 @@ initGl(transparency=False, materialcolor=False, normalized=True, lighting=True,
 glutInit()
 reshape(*WINDOW_SIZE)
 initLight(GL_LIGHT0)
+glClearColor(210.0/255, 224.0/255, 224.0/255, 1.0)
 
 with open("config.json") as json_config:
     config_dict = json.load(json_config)
@@ -31,7 +32,9 @@ config = config_dict["settings"]
 clock = pygame.time.Clock()
 
 # nivel
-level = Level("maps/bowl.json")
+level = Level("maps/flat.json")
+
+shards = level.get_shards()
 
 # crea y ubica al jugador en el nivel
 player = Player()
@@ -41,10 +44,12 @@ camera = EdgeyCamera(player)
 
 axes = create_axes(10000)
 
-
+frame = 0
 print "Main loop started"
 
 while(True):
+    frame+=1
+    print "frame:", frame
     clock.tick(FPS)
     clearBuffer()
     camera.place()
@@ -65,43 +70,99 @@ while(True):
                 camera.gradual_rotateRight()
 
             # relative movements
+            # mata de codigo, cuidado al entrar
             if not player.is_falling():
                 if orientation == 0:
                     if event.key == K_w:
-                        player.move_neg_x()
+                        if not player.can_rise_neg_x(level):
+                            player.move_neg_x()
+                        else:
+                            player.rise_neg_x()
                     elif event.key == K_s:
-                        player.move_x()
+                        if not player.can_rise_x(level):
+                            player.move_x()
+                        else:
+                            player.rise_x()
                     elif event.key == K_a:
-                        player.move_neg_y()
+                        if not player.can_rise_neg_y(level):
+                            player.move_neg_y()
+                        else:
+                            player.rise_neg_y()
                     elif event.key == K_d:
-                        player.move_y()
+                        if not player.can_rise_y(level):
+                            player.move_y()
+                        else:
+                            player.rise_y()
                 elif orientation == 1:
                     if event.key == K_w:
-                        player.move_y()
+                        if not player.can_rise_y(level):
+                            player.move_y()
+                        else:
+                            player.rise_y()
                     elif event.key == K_s:
-                        player.move_neg_y()
+                        if not player.can_rise_neg_y(level):
+                            player.move_neg_y()
+                        else:
+                            player.rise_neg_y()
                     elif event.key == K_a:
-                        player.move_neg_x()
+                        if not player.can_rise_neg_x(level):
+                            player.move_neg_x()
+                        else:
+                            player.rise_neg_x()
                     elif event.key == K_d:
-                        player.move_x()
+                        if not player.can_rise_x(level):
+                            player.move_x()
+                        else:
+                            player.rise_x()
                 elif orientation == 2:
                     if event.key == K_w:
-                        player.move_x()
+                        if not player.can_rise_x(level):
+                            player.move_x()
+                        else:
+                            player.rise_x()
                     elif event.key == K_s:
-                        player.move_neg_x()
+                        if not player.can_rise_neg_x(level):
+                            player.move_neg_x()
+                        else:
+                            player.rise_neg_x()
                     elif event.key == K_a:
-                        player.move_y()
+                        if not player.can_rise_y(level):
+                            player.move_y()
+                        else:
+                            player.rise_y()
                     elif event.key == K_d:
-                        player.move_neg_y()
+                        if not player.can_rise_neg_y(level):
+                            player.move_neg_y()
+                        else:
+                            player.rise_neg_y()
                 elif orientation == 3:
                     if event.key == K_w:
-                        player.move_neg_y()
+                        if not player.can_rise_neg_y(level):
+                            player.move_neg_y()
+                        else:
+                            player.rise_neg_y()
                     elif event.key == K_s:
-                        player.move_y()
+                        if not player.can_rise_y(level):
+                            player.move_y()
+                        else:
+                            player.rise_
+                            y()
                     elif event.key == K_a:
-                        player.move_x()
+                        if not player.can_rise_x(level):
+                            player.move_x()
+                        else:
+                            player.rise_x()
                     elif event.key == K_d:
-                        player.move_neg_x()
+                        if not player.can_rise_neg_x(level):
+                            player.move_neg_x()
+                        else:
+                            player.rise_neg_x()
+
+            if event.key == K_f:
+                print player.can_rise_x(level)
+                print player.can_rise_neg_x(level)
+                print player.can_rise_y(level)
+                print player.can_rise_neg_y(level)
 
     keys = pygame.key.get_pressed()
 
@@ -112,7 +173,7 @@ while(True):
     # lógica del nivel
     player_coord = player.get_grid_coordinates()
     if level.get_object_below(player_coord) is None:
-        player.fall()
+        player.fall(player_coord, level)
 
     if player_coord[2] <= 0:
         print "player dead"
@@ -130,6 +191,9 @@ while(True):
     level.draw()
 
     # dibuja modelos
+    for shard in shards:
+        shard.draw()
+    
     player.draw()
 
     pygame.display.flip()

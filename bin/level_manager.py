@@ -3,6 +3,7 @@
 # imports
 import json as json
 from presets import BasicTile
+from presets import Shard
 from pygltoolbox.utils_geometry import *
 
 
@@ -14,8 +15,10 @@ class Level:
         map_array = map_dict["levels"]
 
         with open("config.json") as config:
-            side_length = json.load(config)["constants"]["side_length"]
+            self.constants = json.load(config)["constants"]
 
+        side_length = self.constants["side_length"]
+        shard_radius = self.constants["shard_radius"]
         # inicializa arreglo para cada celda
         height = len(map_array)
         width = len(map_array[0])
@@ -46,13 +49,20 @@ class Level:
                             self.tilemap[row][column][level].set_name("Spawn")
                         else:
                             self.tilemap[row][column][level].set_name("Tile")
+                    elif cell == 2:
+                        self.tilemap[row][column][level] = Shard(row, column, level,
+                                                                 side_length,
+                                                                 shard_radius)
 
     def draw(self):
         for row, i in enumerate(self.tilemap):
             for column, j in enumerate(self.tilemap[row]):
                 for height, z in enumerate(self.tilemap[row][column]):
-                    if self.tilemap[row][column][height] is not None:
-                    	self.tilemap[row][column][height].draw()
+                    if (
+                        self.tilemap[row][column][height] is not None and
+                        not isinstance(self.tilemap[row][column][height], Shard)
+                    ):
+                        self.tilemap[row][column][height].draw()
 
     def get_object_below(self, coords):
     	row = coords[0]
@@ -63,3 +73,18 @@ class Level:
     	except IndexError:
     		return None
     	return obj
+
+    def get_object_at(self, coords):
+        try:
+            return self.tilemap[coords[0]][coords[1]][coords[2]]
+        except IndexError:
+            return None
+
+    def get_shards(self):
+        shards = []
+        for row, i in enumerate(self.tilemap):
+            for column, j in enumerate(self.tilemap[row]):
+                for height, z in enumerate(self.tilemap[row][column]):
+                    if isinstance(self.tilemap[row][column][height], Shard):
+                        shards.append(self.tilemap[row][column][height])
+        return shards

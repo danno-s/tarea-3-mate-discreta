@@ -12,6 +12,7 @@
 		"rot_frames": 10,
 		"rot_angle": 90,
 		"move_frames": 10,
-		"gravity": 5
+		"gravity": 5,
+		"shard_radius": 10
 	}
 }
