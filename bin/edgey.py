@@ -32,7 +32,7 @@ config = config_dict["settings"]
 clock = pygame.time.Clock()
 
 # nivel
-level = Level("maps/flat.json")
+level = Level("maps/stairs.json")
 
 shards = level.get_shards()
 
@@ -48,8 +48,6 @@ frame = 0
 print "Main loop started"
 
 while(True):
-    frame+=1
-    print "frame:", frame
     clock.tick(FPS)
     clearBuffer()
     camera.place()
