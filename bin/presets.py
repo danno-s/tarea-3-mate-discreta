@@ -362,7 +362,7 @@ class Shard():
         self.figure = Particle(row * cube_side_length,
                                column * cube_side_length,
                                level * cube_side_length)
-        self.figure.add_property("GLLIST", create_cube())
+        self.figure.add_property("GLLIST", create_sphere())
         self.figure.add_property("SIZE", [self.radius,
                                           self.radius,
                                           self.radius])

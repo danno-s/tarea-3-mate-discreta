@@ -32,7 +32,7 @@ config = config_dict["settings"]
 clock = pygame.time.Clock()
 
 # nivel
-level = Level("maps/stairs.json")
+level = Level("maps/flat.json")
 
 shards = level.get_shards()
 
