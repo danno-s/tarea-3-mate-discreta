@@ -1,11 +1,12 @@
 {
 	"camera": {
 		"radius": 1500,
-		"phi": 45,
+		"phi": 225,
 		"theta": 60
 	},
 	"settings": {
-		"light": 1
+		"light": 1,
+		"font": "fonts/Prototype.ttf"
 	},
 	"constants": {
 		"side_length": 80,
@@ -13,6 +14,6 @@
 		"rot_angle": 90,
 		"move_frames": 10,
 		"gravity": 5,
-		"shard_radius": 10
+		"shard_side_length": 20
 	}
 }

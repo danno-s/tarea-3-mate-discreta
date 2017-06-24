@@ -18,7 +18,7 @@ class Level:
             self.constants = json.load(config)["constants"]
 
         side_length = self.constants["side_length"]
-        shard_radius = self.constants["shard_radius"]
+        shard_side_length = self.constants["shard_side_length"]
         # inicializa arreglo para cada celda
         height = len(map_array)
         width = len(map_array[0])
@@ -52,7 +52,7 @@ class Level:
                     elif cell == 2:
                         self.tilemap[row][column][level] = Shard(row, column, level,
                                                                  side_length,
-                                                                 shard_radius)
+                                                                 shard_side_length)
 
     def draw(self):
         for row, i in enumerate(self.tilemap):
@@ -65,14 +65,14 @@ class Level:
                         self.tilemap[row][column][height].draw()
 
     def get_object_below(self, coords):
-    	row = coords[0]
-    	column = coords[1]
-    	height = coords[2] - 1
-    	try:
-    		obj = self.tilemap[row][column][height]
-    	except IndexError:
-    		return None
-    	return obj
+        row = coords[0]
+        column = coords[1]
+        height = coords[2] - 1
+        try:
+            obj = self.tilemap[row][column][height]
+        except IndexError:
+            return None
+        return obj
 
     def get_object_at(self, coords):
         try:

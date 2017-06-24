@@ -3,6 +3,7 @@ from pygltoolbox.particles import *
 from pygltoolbox.figures import *
 from pygltoolbox.materials import *
 import json as json
+from random import random
 
 
 class Player():
@@ -357,15 +358,17 @@ class BasicTile:
 
 
 class Shard():
-    def __init__(self, row, column, level, cube_side_length, shard_radius):
-        self.radius = shard_radius
+    def __init__(self, row, column, level, cube_side_length, shard_side_length):
+        self.side_length = shard_side_length
+        self.cube_side_length = cube_side_length
         self.figure = Particle(row * cube_side_length,
                                column * cube_side_length,
                                level * cube_side_length)
-        self.figure.add_property("GLLIST", create_sphere())
-        self.figure.add_property("SIZE", [self.radius,
-                                          self.radius,
-                                          self.radius])
+        roll = random()
+        self.figure.add_property("GLLIST", create_octahedron())
+        self.figure.add_property("SIZE", [self.side_length,
+                                          self.side_length,
+                                          self.side_length])
         self.figure.add_property("MATERIAL", material_shard)
         self.figure.set_name("Shard")
 
@@ -389,3 +392,9 @@ class Shard():
 
     def get_name(self):
         return self.figure.get_name()
+
+    def get_grid_coordinates(self):
+        height = self.get_z() / self.cube_side_length
+        column = self.get_y() / self.cube_side_length
+        row = self.get_x() / self.cube_side_length
+        return [int(row), int(column), int(height)]

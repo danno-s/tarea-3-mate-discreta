@@ -22,7 +22,7 @@ initGl(transparency=False, materialcolor=False, normalized=True, lighting=True,
 glutInit()
 reshape(*WINDOW_SIZE)
 initLight(GL_LIGHT0)
-glClearColor(210.0/255, 224.0/255, 224.0/255, 1.0)
+glClearColor(210.0 / 255, 224.0 / 255, 224.0 / 255, 1.0)
 
 with open("config.json") as json_config:
     config_dict = json.load(json_config)
@@ -31,7 +31,8 @@ config = config_dict["settings"]
 
 clock = pygame.time.Clock()
 
-# nivel
+# carga inicial
+font = pygame.font.Font(config["font"], 40)
 level = Level("maps/flat.json")
 
 shards = level.get_shards()
@@ -175,6 +176,10 @@ while(True):
 
     if player_coord[2] <= 0:
         print "player dead"
+
+    for shard in shards:
+        if shard.get_grid_coordinates() == player_coord:
+            shards.remove(shard)
 
     # actualiza camara
     camera.update()

@@ -495,6 +495,36 @@ def create_piramid(color=COLOR_WHITE):
     return obj
 
 
+# noinspection PyBroadException, PyargumentEqualDefault
+def create_octahedron(color=COLOR_WHITE):
+    """Crea una pirámide de base cuadrada"""
+    arista = 2.0
+    a = Point3(-0.375, -0.375, 0) * arista
+    b = Point3(0.375, -0.375, 0) * arista
+    c = Point3(0.375, 0.375, 0) * arista
+    d = Point3(-0.375, 0.375, 0) * arista
+    e = Point3(0.0, 0.0, 0.5) * arista
+    f = Point3(0.0, 0.0, -0.5) * arista
+
+    obj = glGenLists(1)
+    glNewList(obj, GL_COMPILE)
+    glPushMatrix()
+    glColor4fv(color)
+    glBegin(GL_TRIANGLES)
+    drawVertexListCreateNormal([a, b, e])
+    drawVertexListCreateNormal([a, b, f])
+    drawVertexListCreateNormal([b, c, e])
+    drawVertexListCreateNormal([b, c, f])
+    drawVertexListCreateNormal([c, d, e])
+    drawVertexListCreateNormal([c, d, f])
+    drawVertexListCreateNormal([d, a, e])
+    drawVertexListCreateNormal([d, a, f])
+    glEnd()
+    glPopMatrix()
+    glEndList()
+    return obj
+
+
 # noinspection PyBroadException,PyArgumentEqualDefault
 def create_piramid_textured(texture_list):
     """Crea una pirámide de base cuadrada con texturas"""

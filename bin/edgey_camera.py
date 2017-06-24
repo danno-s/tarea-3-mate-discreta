@@ -23,7 +23,7 @@ class EdgeyCamera():
         self.center = [player.get_x(), player.get_y(), player.get_z()]
 
         # valor entero entre 0 y 3, cada número indica un distinto set de acciones para ejecutar
-        self.orientation = 0
+        self.orientation = 2
 
         self.place()
 
