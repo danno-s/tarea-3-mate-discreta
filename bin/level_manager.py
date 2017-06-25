@@ -2,8 +2,7 @@
 
 # imports
 import json as json
-from presets import BasicTile
-from presets import Shard
+from presets import Shard, BasicTile, FallingTile
 from pygltoolbox.utils_geometry import *
 
 
@@ -42,9 +41,9 @@ class Level:
                         continue
                     elif abs(cell) == 1:
                         self.tilemap[row][column][level] = BasicTile(row,
-                                                                column,
-                                                                level,
-                                                                side_length)
+                                                                     column,
+                                                                     level,
+                                                                     side_length)
                         if cell == -1:
                             self.tilemap[row][column][level].set_name("Spawn")
                         else:
@@ -53,6 +52,11 @@ class Level:
                         self.tilemap[row][column][level] = Shard(row, column, level,
                                                                  side_length,
                                                                  shard_side_length)
+                    elif cell == 3:
+                        self.tilemap[row][column][level] = FallingTile(row,
+                                                                       column,
+                                                                       level,
+                                                                       side_length)
 
     def draw(self):
         for row, i in enumerate(self.tilemap):
@@ -88,3 +92,18 @@ class Level:
                     if isinstance(self.tilemap[row][column][height], Shard):
                         shards.append(self.tilemap[row][column][height])
         return shards
+
+    def get_fallers(self):
+        fallers = []
+        for row, i in enumerate(self.tilemap):
+            for column, j in enumerate(self.tilemap[row]):
+                for height, z in enumerate(self.tilemap[row][column]):
+                    if isinstance(self.tilemap[row][column][height], FallingTile):
+                        fallers.append(self.tilemap[row][column][height])
+        return fallers
+
+    def remove_object_at(self, position):
+        try:
+            self.tilemap[position[0]][position[1]][position[2]] = None
+        except:
+            print "Failed to remove object"

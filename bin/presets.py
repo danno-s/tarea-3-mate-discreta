@@ -398,3 +398,91 @@ class Shard():
         column = self.get_y() / self.cube_side_length
         row = self.get_x() / self.cube_side_length
         return [int(row), int(column), int(height)]
+
+
+class FallingTile:
+    def __init__(self, row, column, level, side_length):
+        self.side_length = side_length
+        self.start_pos = [row * self.side_length, column * self.side_length, (level + 0.4) * self.side_length]
+        self.tile = Particle(row * self.side_length,
+                             column * self.side_length,
+                             (level + 0.4) * self.side_length)
+        self.tile.add_property("GLLIST", create_cube())
+        self.tile.add_property("SIZE", [self.side_length / 2,
+                                        self.side_length / 2,
+                                        self.side_length / 10])
+        self.tile.add_property("MATERIAL", material_tile_cube)
+
+        self.stable = None
+        self.fall_speed = 0
+
+        with open("config.json") as config:
+            constants = json.load(config)["constants"]
+            self.gravity = constants["gravity"]
+            self.height_treshold = constants["height_treshold"]
+
+    def set_name(self, name):
+        self.tile.set_name(name)
+
+    def get_name(self):
+        return self.tile.get_name()
+
+    def add_x(self, x):
+        self.tile.set_x(self.get_x() + x)
+
+    def add_y(self, y):
+        self.tile.set_y(self.get_y() + y)
+
+    def add_z(self, z):
+        self.tile.set_z(self.get_z() + z)
+
+    def get_x(self):
+        return self.tile.get_x()
+
+    def get_y(self):
+        return self.tile.get_y()
+
+    def get_z(self):
+        return self.tile.get_z()
+
+    def get_grid_coordinates(self):
+        height = self.get_z() / self.side_length
+        column = self.get_y() / self.side_length
+        row = self.get_x() / self.side_length
+        return [int(row), int(column), int(height)]
+
+    def get_original_coordinates(self):
+        row = self.start_pos[0] / self.side_length
+        column = self.start_pos[1] / self.side_length
+        height = self.start_pos[2] / self.side_length
+        return [int(row), int(column), int(height)]
+
+    def fall(self):
+        self.stable = True
+
+    def draw(self):
+        self.tile.exec_property_func("MATERIAL")
+        draw_list(self.tile.get_property("GLLIST"),
+                  self.tile.get_position_list(),
+                  0,
+                  None,
+                  self.tile.get_property("SIZE"),
+                  None)
+
+    def update(self, player):
+        if not self.stable and self.stable is not None:
+            self.fall_speed += self.gravity
+            self.add_z(-self.fall_speed)
+        elif self.stable and self.stable is not None:
+            self.check_above(player)
+
+    def check_above(self, player):
+        player_coord = player.get_grid_coordinates()
+        tile_coord = self.get_grid_coordinates()
+        above_tile = [tile_coord[0], tile_coord[1], tile_coord[2] + 1]
+
+        if player_coord != above_tile:
+            self.stable = False
+
+    def is_deletable(self):
+        return self.get_z() < -10

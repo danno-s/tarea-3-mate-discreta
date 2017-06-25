@@ -2,16 +2,21 @@
 
 # imports
 import json as json
+from presets import Player, FallingTile
+from text_handler import drawText as draw_text
 from level_manager import Level
-from presets import Player
 from edgey_camera import EdgeyCamera
 from pygltoolbox.glpython import *
 from pygltoolbox.opengl_lib import *
 
 # constants
-FPS = 60
-NUM_LIGHTS = 2
-WINDOW_SIZE = [1280, 720]
+with open("config.json") as json_config:
+    config_dict = json.load(json_config)
+
+config = config_dict["settings"]
+
+FPS = config_dict["display_constants"]["fps"]
+WINDOW_SIZE = config_dict["display_constants"]["dimensions"]
 
 # init
 initPygame(WINDOW_SIZE[0], WINDOW_SIZE[1], "Edgey", centered=True)
@@ -24,18 +29,20 @@ reshape(*WINDOW_SIZE)
 initLight(GL_LIGHT0)
 glClearColor(210.0 / 255, 224.0 / 255, 224.0 / 255, 1.0)
 
-with open("config.json") as json_config:
-    config_dict = json.load(json_config)
-
-config = config_dict["settings"]
 
 clock = pygame.time.Clock()
 
+surface = pygame.display.get_surface()
+
 # carga inicial
 font = pygame.font.Font(config["font"], 40)
-level = Level("maps/flat.json")
+level = Level("maps/falls.json")
 
 shards = level.get_shards()
+shardcount = 0
+total_shards = len(shards)
+
+falling_tiles = level.get_fallers()
 
 # crea y ubica al jugador en el nivel
 player = Player()
@@ -171,8 +178,12 @@ while(True):
 
     # lógica del nivel
     player_coord = player.get_grid_coordinates()
-    if level.get_object_below(player_coord) is None:
+
+    obj = level.get_object_below(player_coord)
+    if obj is None:
         player.fall(player_coord, level)
+    elif isinstance(obj, FallingTile):
+        obj.fall()
 
     if player_coord[2] <= 0:
         print "player dead"
@@ -180,6 +191,12 @@ while(True):
     for shard in shards:
         if shard.get_grid_coordinates() == player_coord:
             shards.remove(shard)
+            shardcount += 1
+
+    for falling_tile in falling_tiles:
+        if falling_tile.is_deletable():
+            level.remove_object_at(falling_tile.get_original_coordinates())
+        falling_tile.update(player)
 
     # actualiza camara
     camera.update()
@@ -196,7 +213,13 @@ while(True):
     # dibuja modelos
     for shard in shards:
         shard.draw()
-    
+        shardcount += 1
+
     player.draw()
+
+    # dibuja texto
+    progress_string = str(shardcount) + "/" + str(total_shards) + " shards collected"
+    shard_progress = font.render(progress_string, True, (0.0, 0.0, 0.0))
+
 
     pygame.display.flip()
