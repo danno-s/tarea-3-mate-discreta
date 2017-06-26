@@ -2,7 +2,7 @@
 
 # imports
 import json as json
-from presets import Shard, BasicTile, FallingTile
+from presets import Shard, BasicTile, FallingTile, PushingBlock
 from pygltoolbox.utils_geometry import *
 
 
@@ -57,6 +57,30 @@ class Level:
                                                                        column,
                                                                        level,
                                                                        side_length)
+                    elif cell == 4:
+                        self.tilemap[row][column][level] = PushingBlock(row,
+                                                                        column,
+                                                                        level,
+                                                                        side_length,
+                                                                        0)
+                    elif cell == 5:
+                        self.tilemap[row][column][level] = PushingBlock(row,
+                                                                        column,
+                                                                        level,
+                                                                        side_length,
+                                                                        1)
+                    elif cell == 6:
+                        self.tilemap[row][column][level] = PushingBlock(row,
+                                                                        column,
+                                                                        level,
+                                                                        side_length,
+                                                                        2)
+                    elif cell == 7:
+                        self.tilemap[row][column][level] = PushingBlock(row,
+                                                                        column,
+                                                                        level,
+                                                                        side_length,
+                                                                        3)
 
     def draw(self):
         for row, i in enumerate(self.tilemap):
@@ -101,6 +125,15 @@ class Level:
                     if isinstance(self.tilemap[row][column][height], FallingTile):
                         fallers.append(self.tilemap[row][column][height])
         return fallers
+
+    def get_pushers(self):
+        pushers = []
+        for row, i in enumerate(self.tilemap):
+            for column, j in enumerate(self.tilemap[row]):
+                for height, z in enumerate(self.tilemap[row][column]):
+                    if isinstance(self.tilemap[row][column][height], PushingBlock):
+                        pushers.append(self.tilemap[row][column][height])
+        return pushers
 
     def remove_object_at(self, position):
         try:

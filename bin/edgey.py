@@ -24,7 +24,6 @@ initGl(transparency=False, materialcolor=False, normalized=True, lighting=True,
        numlights=1,
        perspectivecorr=True, antialiasing=True, depth=True, smooth=True,
        texture=True, verbose=False)
-glutInit()
 reshape(*WINDOW_SIZE)
 initLight(GL_LIGHT0)
 glClearColor(210.0 / 255, 224.0 / 255, 224.0 / 255, 1.0)
@@ -36,6 +35,7 @@ surface = pygame.display.get_surface()
 
 # carga inicial
 font = pygame.font.Font(config["font"], 40)
+
 level = Level("maps/flat.json")
 
 shards = level.get_shards()
@@ -44,10 +44,13 @@ total_shards = len(shards)
 
 falling_tiles = level.get_fallers()
 
+pushers = level.get_pushers()
+
 # crea y ubica al jugador en el nivel
 player = Player()
 player.place(level)
 
+# crea cámara
 camera = EdgeyCamera(player)
 
 frame = 0
@@ -162,12 +165,6 @@ while(True):
                         else:
                             player.rise_neg_x()
 
-            if event.key == K_f:
-                print player.can_rise_x(level)
-                print player.can_rise_neg_x(level)
-                print player.can_rise_y(level)
-                print player.can_rise_neg_y(level)
-
     keys = pygame.key.get_pressed()
 
     # lógica del nivel
@@ -192,11 +189,21 @@ while(True):
             level.remove_object_at(falling_tile.get_original_coordinates())
         falling_tile.update(player)
 
+    for pusher in pushers:
+        if pusher.check_front(player) and not player.sliding():
+            pusher.push()
+            direction = pusher.get_orientation()
+            player.slide(direction)
+
+
     # actualiza camara
     camera.update()
 
     # actualiza modelos
     player.update()
+
+    for pusher in pushers:
+        pusher.update()
 
     # dibuja luces
     glLightfv(GL_LIGHT0, GL_POSITION, [-1000, -250, 1000])

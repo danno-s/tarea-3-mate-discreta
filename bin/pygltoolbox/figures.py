@@ -737,24 +737,6 @@ def create_dodecahedron():
 
 
 # noinspection PyBroadException
-def create_octahedron():
-    """Crea un octahedro de arista 1.0"""
-    obj = glGenLists(1)
-    glNewList(obj, GL_COMPILE)
-    glPushMatrix()
-    try:
-        glutSolidOctahedron()
-    except:
-        if not _ERRS[7]:
-            printGLError(
-                "la version actual de OpenGL no posee la funcion glutSolidOctahedron")
-        _ERRS[7] = True
-    glPopMatrix()
-    glEndList()
-    return obj
-
-
-# noinspection PyBroadException
 def create_icosaedron():
     """Crea un icosahedro de arista 1.0"""
     obj = glGenLists(1)

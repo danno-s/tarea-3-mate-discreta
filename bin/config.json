@@ -15,7 +15,8 @@
 		"move_frames": 10,
 		"gravity": 5,
 		"shard_side_length": 20,
-		"height_treshold": -10
+		"height_treshold": -10,
+		"slide_frames": 5
 	},
 	"display_constants": {
 		"fps": 60,

@@ -15,6 +15,8 @@ class Player():
 
         self.move_frames = self.constants["move_frames"]
 
+        self.slide_frames = self.constants["slide_frames"]
+
         self.gravity = self.constants["gravity"]
 
         self.fall_speed = 0
@@ -24,6 +26,9 @@ class Player():
         self.rot_counter = 0
         self.rot_spd = 0
         self.rot_progress = 0
+        self.slide_direction = None
+        self.slide_progress = 0
+        self.slide_speed = self.side_length / self.slide_frames
         # booleano
         self.move_axis = None
         self.direction = None
@@ -93,6 +98,20 @@ class Player():
             self.add_z(-self.get_z() + self.ground)
             self.falling = False
             self.fall_speed = 0
+
+        # deslizar jugador un cubo hacia una dirección
+        if self.slide_progress > 0:
+            if self.slide_direction == 0:
+                self.add_x(self.slide_speed)
+            elif self.slide_direction == 1:
+                self.add_y(self.slide_speed)
+            elif self.slide_direction == 2:
+                self.add_x(-self.slide_speed)
+            elif self.slide_direction == 3:
+                self.add_y(-self.slide_speed)
+            self.slide_progress -= 1
+        elif self.slide_progress == 0:
+            self.slide_direction = None
 
     def add_x(self, x):
         self.figure.set_x(self.get_x() + x)
@@ -284,7 +303,11 @@ class Player():
         coord = self.get_grid_coordinates()
         coord[0] += 1
         try:
-            if isinstance(level.get_object_at(coord), BasicTile):
+            if (
+                isinstance(level.get_object_at(coord), BasicTile) or
+                isinstance(level.get_object_at(coord), FallingTile) or
+                isinstance(level.get_object_at(coord), PushingBlock)
+            ):
                 return True
         except IndexError:
             return False
@@ -294,7 +317,11 @@ class Player():
         coord = self.get_grid_coordinates()
         coord[0] -= 1
         try:
-            if isinstance(level.get_object_at(coord), BasicTile):
+            if (
+                isinstance(level.get_object_at(coord), BasicTile) or
+                isinstance(level.get_object_at(coord), FallingTile) or
+                isinstance(level.get_object_at(coord), PushingBlock)
+            ):
                 return True
         except IndexError:
             return False
@@ -304,7 +331,11 @@ class Player():
         coord = self.get_grid_coordinates()
         coord[1] += 1
         try:
-            if isinstance(level.get_object_at(coord), BasicTile):
+            if (
+                isinstance(level.get_object_at(coord), BasicTile) or
+                isinstance(level.get_object_at(coord), FallingTile) or
+                isinstance(level.get_object_at(coord), PushingBlock)
+            ):
                 return True
         except IndexError:
             return False
@@ -314,10 +345,45 @@ class Player():
         coord = self.get_grid_coordinates()
         coord[1] -= 1
         try:
-            if isinstance(level.get_object_at(coord), BasicTile):
+            if (
+                isinstance(level.get_object_at(coord), BasicTile) or
+                isinstance(level.get_object_at(coord), FallingTile) or
+                isinstance(level.get_object_at(coord), PushingBlock)
+            ):
                 return True
         except IndexError:
             return False
+        return False
+
+    def slide(self, orientation):
+        if orientation == 0:
+            self.slide_x()
+        elif orientation == 1:
+            self.slide_y()
+        elif orientation == 2:
+            self.slide_neg_x()
+        elif orientation == 3:
+            self.slide_neg_y()
+
+    def slide_x(self):
+        self.slide_direction = 0
+        self.slide_progress = self.slide_frames
+
+    def slide_y(self):
+        self.slide_direction = 1
+        self.slide_progress = self.slide_frames
+
+    def slide_neg_x(self):
+        self.slide_direction = 2
+        self.slide_progress = self.slide_frames
+
+    def slide_neg_y(self):
+        self.slide_direction = 3
+        self.slide_progress = self.slide_frames
+
+    def sliding(self):
+        if self.slide_direction is not None and self.slide_progress > 0:
+            return True
         return False
 
 
@@ -486,3 +552,237 @@ class FallingTile:
 
     def is_deletable(self):
         return self.get_z() < -2000
+
+
+class PushingBlock:
+    def __init__(self, row, column, level, side_length, orientation):
+        with open("config.json") as config:
+            constants = json.load(config)["constants"]
+            self.push_frames = constants["slide_frames"]
+
+        self.side_length = side_length
+        self.orientation = orientation
+        self.push_speed = self.side_length / self.push_frames
+        self.push_progress = 0
+        self.retraction_progress = 0
+
+        if self.orientation == 0:
+            # pointing along x axis
+            self.body = Particle((row - 0.1) * self.side_length,
+                                 column * self.side_length,
+                                 level * self.side_length)
+            self.body.add_property("GLLIST", create_cube())
+            self.body.add_property("SIZE", [self.side_length * 4 / 10,
+                                            self.side_length / 2,
+                                            self.side_length / 2])
+            self.body.add_property("MATERIAL", material_player_cube)
+
+            self.head = Particle((row + 0.4) * self.side_length,
+                                 column * self.side_length,
+                                 level * self.side_length)
+            self.head.add_property("GLLIST", create_cube())
+            self.head.add_property("SIZE", [self.side_length / 10,
+                                            self.side_length / 2,
+                                            self.side_length / 2])
+            self.head.add_property("MATERIAL", material_falling_tile)
+
+            self.piston = Particle(row * self.side_length,
+                                   column * self.side_length,
+                                   level * self.side_length)
+            self.piston.add_property("GLLIST", create_cube())
+            self.piston.add_property("SIZE", [self.side_length / 10,
+                                              self.side_length / 10,
+                                              self.side_length / 10])
+            self.piston.add_property("MATERIAL", material_shard)
+
+        elif self.orientation == 1:
+            # pointing along y axis
+            self.body = Particle(row * self.side_length,
+                                 (column - 0.1) * self.side_length,
+                                 level * self.side_length)
+            self.body.add_property("GLLIST", create_cube())
+            self.body.add_property("SIZE", [self.side_length / 2,
+                                            self.side_length * 4 / 10,
+                                            self.side_length / 2])
+            self.body.add_property("MATERIAL", material_player_cube)
+
+            self.head = Particle(row * self.side_length,
+                                 (column + 0.4) * self.side_length,
+                                 level * self.side_length)
+            self.head.add_property("GLLIST", create_cube())
+            self.head.add_property("SIZE", [self.side_length / 2,
+                                            self.side_length / 10,
+                                            self.side_length / 2])
+            self.head.add_property("MATERIAL", material_falling_tile)
+
+            self.piston = Particle(row * self.side_length,
+                                   column * self.side_length,
+                                   level * self.side_length)
+            self.piston.add_property("GLLIST", create_cube())
+            self.piston.add_property("SIZE", [self.side_length / 10,
+                                              self.side_length / 10,
+                                              self.side_length / 10])
+            self.piston.add_property("MATERIAL", material_shard)
+
+        elif self.orientation == 2:
+            # pointing along neg x axis
+            self.body = Particle((row + 0.1) * self.side_length,
+                                 column * self.side_length,
+                                 level * self.side_length)
+            self.body.add_property("GLLIST", create_cube())
+            self.body.add_property("SIZE", [self.side_length * 4 / 10,
+                                            self.side_length / 2,
+                                            self.side_length / 2])
+            self.body.add_property("MATERIAL", material_player_cube)
+
+            self.head = Particle((row - 0.4) * self.side_length,
+                                 column * self.side_length,
+                                 level * self.side_length)
+            self.head.add_property("GLLIST", create_cube())
+            self.head.add_property("SIZE", [self.side_length / 10,
+                                            self.side_length / 2,
+                                            self.side_length / 2])
+            self.head.add_property("MATERIAL", material_falling_tile)
+
+            self.piston = Particle(row * self.side_length,
+                                   column * self.side_length,
+                                   level * self.side_length)
+            self.piston.add_property("GLLIST", create_cube())
+            self.piston.add_property("SIZE", [self.side_length / 10,
+                                              self.side_length / 10,
+                                              self.side_length / 10])
+            self.piston.add_property("MATERIAL", material_shard)
+
+        elif self.orientation == 3:
+            # pointing along neg y axis
+            self.body = Particle(row * self.side_length,
+                                 (column + 0.1) * self.side_length,
+                                 level * self.side_length)
+            self.body.add_property("GLLIST", create_cube())
+            self.body.add_property("SIZE", [self.side_length / 2,
+                                            self.side_length * 4 / 10,
+                                            self.side_length / 2])
+            self.body.add_property("MATERIAL", material_player_cube)
+
+            self.head = Particle(row * self.side_length,
+                                 (column - 0.4) * self.side_length,
+                                 level * self.side_length)
+            self.head.add_property("GLLIST", create_cube())
+            self.head.add_property("SIZE", [self.side_length / 2,
+                                            self.side_length / 10,
+                                            self.side_length / 2])
+            self.head.add_property("MATERIAL", material_falling_tile)
+
+            self.piston = Particle(row * self.side_length,
+                                   column * self.side_length,
+                                   level * self.side_length)
+            self.piston.add_property("GLLIST", create_cube())
+            self.piston.add_property("SIZE", [self.side_length / 10,
+                                              self.side_length / 10,
+                                              self.side_length / 10])
+            self.piston.add_property("MATERIAL", material_shard)
+
+    def get_name(self):
+        return self.body.get_name()
+
+    def draw(self):
+        self.piston.exec_property_func("MATERIAL")
+        draw_list(self.piston.get_property("GLLIST"),
+                  self.piston.get_position_list(),
+                  0,
+                  None,
+                  self.piston.get_property("SIZE"),
+                  None)
+
+        self.body.exec_property_func("MATERIAL")
+        draw_list(self.body.get_property("GLLIST"),
+                  self.body.get_position_list(),
+                  0,
+                  None,
+                  self.body.get_property("SIZE"),
+                  None)
+
+        self.head.exec_property_func("MATERIAL")
+        draw_list(self.head.get_property("GLLIST"),
+                  self.head.get_position_list(),
+                  0,
+                  None,
+                  self.head.get_property("SIZE"),
+                  None)
+
+    def head_add_x(self, x):
+        self.head.set_x(self.get_head_x() + x)
+
+    def head_add_y(self, y):
+        self.head.set_y(self.get_head_y() + y)
+
+    def head_add_z(self, z):
+        self.head.set_z(self.get_head_z() + z)
+
+    def get_grid_coordinates(self):
+        height = self.get_z() / self.side_length
+        column = self.get_y() / self.side_length
+        row = self.get_x() / self.side_length
+        return [int(row), int(column), int(height)]
+
+    def get_x(self):
+        return self.piston.get_x()
+
+    def get_y(self):
+        return self.piston.get_y()
+
+    def get_z(self):
+        return self.piston.get_z()
+
+    def get_head_x(self):
+        return self.head.get_x()
+
+    def get_head_y(self):
+        return self.head.get_y()
+
+    def get_head_z(self):
+        return self.head.get_z()
+
+    def check_front(self, player):
+        player_coords = player.get_grid_coordinates()
+        pusher_coords = self.get_grid_coordinates()
+        if self.orientation == 0:
+            target = [pusher_coords[0] + 1, pusher_coords[1], pusher_coords[2]]
+        elif self.orientation == 1:
+            target = [pusher_coords[0], pusher_coords[1] + 1, pusher_coords[2]]
+        elif self.orientation == 2:
+            target = [pusher_coords[0] - 1, pusher_coords[1], pusher_coords[2]]
+        elif self.orientation == 3:
+            target = [pusher_coords[0], pusher_coords[1] - 1, pusher_coords[2]]
+
+        return player_coords == target
+
+    def get_orientation(self):
+        return self.orientation
+
+    def update(self):
+        if self.push_progress > 0:
+            if self.orientation == 0:
+                self.head_add_x(self.push_speed)
+            elif self.orientation == 1:
+                self.head_add_y(self.push_speed)
+            elif self.orientation == 2:
+                self.head_add_x(-self.push_speed)
+            elif self.orientation == 3:
+                self.head_add_y(-self.push_speed)
+            self.push_progress -= 1
+            if self.push_progress == 0:
+                self.retraction_progress = self.push_frames
+        elif self.retraction_progress > 0:
+            if self.orientation == 0:
+                self.head_add_x(-self.push_speed)
+            elif self.orientation == 1:
+                self.head_add_y(-self.push_speed)
+            elif self.orientation == 2:
+                self.head_add_x(self.push_speed)
+            elif self.orientation == 3:
+                self.head_add_y(self.push_speed)
+            self.retraction_progress -= 1
+
+    def push(self):
+        self.push_progress = self.push_frames
