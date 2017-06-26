@@ -2,7 +2,7 @@
 
 # imports
 import json as json
-from presets import Shard, BasicTile, FallingTile, PushingBlock
+from presets import Shard, BasicTile, FallingTile, PushingBlock, FinishTile
 from pygltoolbox.utils_geometry import *
 
 
@@ -81,6 +81,11 @@ class Level:
                                                                         level,
                                                                         side_length,
                                                                         3)
+                    elif cell == 8:
+                        self.tilemap[row][column][level] = FinishTile(row,
+                                                                      column,
+                                                                      level,
+                                                                      side_length)
 
     def draw(self):
         for row, i in enumerate(self.tilemap):

@@ -786,3 +786,39 @@ class PushingBlock:
 
     def push(self):
         self.push_progress = self.push_frames
+
+
+class FinishTile:
+    def __init__(self, row, column, level, side_length):
+        self.tile = Particle(row * side_length,
+                             column * side_length,
+                             level * side_length)
+        self.tile.add_property("GLLIST", create_cube())
+        self.tile.add_property("SIZE", [side_length / 2,
+                                        side_length / 2,
+                                        side_length / 2])
+        self.tile.add_property("MATERIAL", material_finish_tile)
+
+    def set_name(self, name):
+        self.tile.set_name(name)
+
+    def get_name(self):
+        return self.tile.get_name()
+
+    def get_x(self):
+        return self.tile.get_x()
+
+    def get_y(self):
+        return self.tile.get_y()
+
+    def get_z(self):
+        return self.tile.get_z()
+
+    def draw(self):
+        self.tile.exec_property_func("MATERIAL")
+        draw_list(self.tile.get_property("GLLIST"),
+                  self.tile.get_position_list(),
+                  0,
+                  None,
+                  self.tile.get_property("SIZE"),
+                  None)

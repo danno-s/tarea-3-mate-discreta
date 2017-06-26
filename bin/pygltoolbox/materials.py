@@ -290,3 +290,11 @@ def material_shard(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
     glMaterialfv(face, GL_SPECULAR, [42.0 / 255, 200.0 / 255, 229.0 / 255, 1.0])
     glMaterialfv(face, GL_SHININESS, 128)
     glMaterialfv(face, GL_EMISSION, emission)
+
+
+def material_finish_tile(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
+    glMaterialfv(face, GL_AMBIENT, [247.0 / 255, 16.0 / 255, 21.0 / 255, 1.0])
+    glMaterialfv(face, GL_DIFFUSE, [247.0 / 255, 16.0 / 255, 21.0 / 255, 1.0])
+    glMaterialfv(face, GL_SPECULAR, [247.0 / 255, 16.0 / 255, 21.0 / 255, 1.0])
+    glMaterialfv(face, GL_SHININESS, 128)
+    glMaterialfv(face, GL_EMISSION, emission)

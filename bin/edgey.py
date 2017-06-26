@@ -2,7 +2,7 @@
 
 # imports
 import json as json
-from presets import Player, FallingTile
+from presets import Player, FallingTile, FinishTile
 from text_handler import drawText as draw_text
 from level_manager import Level
 from edgey_camera import EdgeyCamera
@@ -175,6 +175,9 @@ while(True):
         player.fall(player_coord, level)
     elif isinstance(obj, FallingTile):
         obj.fall()
+    elif isinstance(obj, FinishTile) and shardcount == total_shards:
+        print "player victory"
+    print shardcount, total_shards
 
     if player_coord[2] <= 0:
         print "player dead"
@@ -195,7 +198,6 @@ while(True):
             direction = pusher.get_orientation()
             player.slide(direction)
 
-
     # actualiza camara
     camera.update()
 
@@ -214,13 +216,11 @@ while(True):
     # dibuja modelos
     for shard in shards:
         shard.draw()
-        shardcount += 1
 
     player.draw()
 
     # dibuja texto
     progress_string = str(shardcount) + "/" + str(total_shards) + " shards collected"
     shard_progress = font.render(progress_string, True, (0.0, 0.0, 0.0))
-
 
     pygame.display.flip()
