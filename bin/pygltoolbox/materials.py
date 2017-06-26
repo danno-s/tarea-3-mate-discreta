@@ -261,24 +261,32 @@ def material_natural_white(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
 
 
 def material_player_cube(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
-    glMaterialfv(face, GL_AMBIENT, [247.0/255, 173.0/255, 89.0/255, 1.0])
-    glMaterialfv(face, GL_DIFFUSE, [247.0/255, 173.0/255, 89.0/255, 1.0])
-    glMaterialfv(face, GL_SPECULAR, [247.0/255, 173.0/255, 89.0/255, 1.0])
+    glMaterialfv(face, GL_AMBIENT, [14.0 / 255, 77.0 / 255, 116.0 / 255, 1.0])
+    glMaterialfv(face, GL_DIFFUSE, [14.0 / 255, 77.0 / 255, 116.0 / 255, 1.0])
+    glMaterialfv(face, GL_SPECULAR, [14.0 / 255, 77.0 / 255, 116.0 / 255, 1.0])
     glMaterialfv(face, GL_SHININESS, 128)
     glMaterialfv(face, GL_EMISSION, emission)
 
 
 def material_tile_cube(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
-    glMaterialfv(face, GL_AMBIENT, [173./255, 179.0/255, 194.0/255, 1.0])
-    glMaterialfv(face, GL_DIFFUSE, [173./255, 179.0/255, 194.0/255, 1.0])
-    glMaterialfv(face, GL_SPECULAR, [173./255, 179.0/255, 194.0/255, 1.0])
+    glMaterialfv(face, GL_AMBIENT, [244.0 / 255, 237.0 / 255, 248.0 / 255, 1.0])
+    glMaterialfv(face, GL_DIFFUSE, [244.0 / 255, 237.0 / 255, 248.0 / 255, 1.0])
+    glMaterialfv(face, GL_SPECULAR, [244.0 / 255, 237.0 / 255, 248.0 / 255, 1.0])
+    glMaterialfv(face, GL_SHININESS, 128)
+    glMaterialfv(face, GL_EMISSION, emission)
+
+
+def material_falling_tile(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
+    glMaterialfv(face, GL_AMBIENT, [240.0 / 255, 160.0 / 255, 149.0 / 255, 1.0])
+    glMaterialfv(face, GL_DIFFUSE, [240.0 / 255, 160.0 / 255, 149.0 / 255, 1.0])
+    glMaterialfv(face, GL_SPECULAR, [240.0 / 255, 160.0 / 255, 149.0 / 255, 1.0])
     glMaterialfv(face, GL_SHININESS, 128)
     glMaterialfv(face, GL_EMISSION, emission)
 
 
 def material_shard(emission=DEFAULT_EMISSION, face=GL_FRONT_AND_BACK):
-    glMaterialfv(face, GL_AMBIENT, [247.0/255, 118.0/255, 38.0/255, 1.0])
-    glMaterialfv(face, GL_DIFFUSE, [247.0/255, 118.0/255, 38.0/255, 1.0])
-    glMaterialfv(face, GL_SPECULAR, [247.0/255, 118.0/255, 38.0/255, 1.0])
+    glMaterialfv(face, GL_AMBIENT, [42.0 / 255, 200.0 / 255, 229.0 / 255, 1.0])
+    glMaterialfv(face, GL_DIFFUSE, [42.0 / 255, 200.0 / 255, 229.0 / 255, 1.0])
+    glMaterialfv(face, GL_SPECULAR, [42.0 / 255, 200.0 / 255, 229.0 / 255, 1.0])
     glMaterialfv(face, GL_SHININESS, 128)
     glMaterialfv(face, GL_EMISSION, emission)

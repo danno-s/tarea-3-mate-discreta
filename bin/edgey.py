@@ -36,7 +36,7 @@ surface = pygame.display.get_surface()
 
 # carga inicial
 font = pygame.font.Font(config["font"], 40)
-level = Level("maps/falls.json")
+level = Level("maps/flat.json")
 
 shards = level.get_shards()
 shardcount = 0
@@ -49,8 +49,6 @@ player = Player()
 player.place(level)
 
 camera = EdgeyCamera(player)
-
-axes = create_axes(10000)
 
 frame = 0
 print "Main loop started"
@@ -172,10 +170,6 @@ while(True):
 
     keys = pygame.key.get_pressed()
 
-    glDisable(GL_LIGHTING)
-    glCallList(axes)
-    glEnable(GL_LIGHTING)
-
     # lógica del nivel
     player_coord = player.get_grid_coordinates()
 
@@ -205,7 +199,7 @@ while(True):
     player.update()
 
     # dibuja luces
-    glLightfv(GL_LIGHT0, GL_POSITION, [1000, 250, 1000])
+    glLightfv(GL_LIGHT0, GL_POSITION, [-1000, -250, 1000])
 
     # dibuja mapa
     level.draw()

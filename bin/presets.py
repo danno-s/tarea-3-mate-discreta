@@ -411,7 +411,7 @@ class FallingTile:
         self.tile.add_property("SIZE", [self.side_length / 2,
                                         self.side_length / 2,
                                         self.side_length / 10])
-        self.tile.add_property("MATERIAL", material_tile_cube)
+        self.tile.add_property("MATERIAL", material_falling_tile)
 
         self.stable = None
         self.fall_speed = 0
@@ -485,4 +485,4 @@ class FallingTile:
             self.stable = False
 
     def is_deletable(self):
-        return self.get_z() < -10
+        return self.get_z() < -2000
