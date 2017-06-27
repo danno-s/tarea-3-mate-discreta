@@ -803,7 +803,8 @@ class FinishTile:
         self.tile.add_property("SIZE", [side_length / 2,
                                         side_length / 2,
                                         side_length / 2])
-        self.tile.add_property("MATERIAL", material_finish_tile)
+        self.tile.add_property("MATERIAL", material_dormant_finish_tile)
+        self.activated = False
 
     def set_name(self, name):
         self.tile.set_name(name)
@@ -829,6 +830,9 @@ class FinishTile:
                   self.tile.get_property("SIZE"),
                   None)
 
+    def activate(self):
+        self.tile.modify_property("MATERIAL", material_active_finish_tile)
+        self.activated = True
 
 class OptionTile:
     def __init__(self, row, column, level, side_length, text, action, parameter):
@@ -840,7 +844,7 @@ class OptionTile:
         self.tile.add_property("SIZE", [side_length / 2,
                                         side_length / 2,
                                         side_length / 2])
-        self.tile.add_property("MATERIAL", material_finish_tile)
+        self.tile.add_property("MATERIAL", material_active_finish_tile)
 
         with open("config.json") as json_config:
             config = json.load(json_config)

@@ -5,15 +5,15 @@
 			[ 0,  1,  1,  1,  1,  1,  1,  1,  0],
 			[ 0,  1,  1,  1,  1,  1,  1,  1,  0],
 			[ 0,  1,  1,  1,  1,  1,  1,  1,  0],
-			[ 0,  1, 90,  1, -1,  1, 91,  1,  0],
+			[ 0,  1, 91,  1, -1,  1, 92,  1,  0],
 			[ 0,  1,  1,  1,  1,  1,  1,  1,  0],
-			[ 0,  1,  1,  1,  1,  1,  1,  1,  0],
+			[ 0,  1,  1,  1, 90,  1,  1,  1,  0],
 			[ 0,  1,  1,  1,  1,  1,  1,  1,  0],
 			[ 0,  0,  0,  0,  0,  0,  0,  0,  0]
 		]
 	],
-	"options": ["Map Selection", "Exit"],
-	"actions": ["load", "quit"],
-	"parameters": ["maps/map_selection.json", ""],
+	"options": ["SandBox", "Level Select", "Exit"],
+	"actions": ["load", "load", "quit"],
+	"parameters": ["maps/map_selection.json", "maps/level_selection.json", ""],
 	"tag": "menu"
 }

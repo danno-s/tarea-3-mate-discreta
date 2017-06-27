@@ -163,6 +163,15 @@ class Level:
                         options.append(self.tilemap[row][column][height])
         return options
 
+    def get_finish(self):
+        finishes = []
+        for row, i in enumerate(self.tilemap):
+            for column, j in enumerate(self.tilemap[row]):
+                for height, z in enumerate(self.tilemap[row][column]):
+                    if isinstance(self.tilemap[row][column][height], FinishTile):
+                        finishes.append(self.tilemap[row][column][height])
+        return finishes
+
     def remove_object_at(self, position):
         try:
             self.tilemap[position[0]][position[1]][position[2]] = None

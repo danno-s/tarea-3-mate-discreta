@@ -13,7 +13,7 @@ from pygltoolbox.opengl_lib import *
 # function definitions
 def load_level(level_name):
     print "loading ", level_name
-    global level, shards, shardcount, total_shards, falling_tiles, pushers, options, player, camera
+    global level, shards, shardcount, total_shards, falling_tiles, pushers, options, player, camera, finishes
     level = Level(level_name)
 
     shards = level.get_shards()
@@ -25,6 +25,8 @@ def load_level(level_name):
     pushers = level.get_pushers()
 
     options = level.get_options()
+
+    finishes = level.get_finish()
 
     player = Player()
     player.place(level)
@@ -217,6 +219,11 @@ while(True):
     elif isinstance(obj, OptionTile) and not obj.highlighted():
         obj.highlight()
 
+    if shardcount == total_shards:
+        for finish in finishes:
+            finish.activate()
+
+
     if player_coord[2] <= -100:
         load_level("maps/failure.json")
 
@@ -260,26 +267,26 @@ while(True):
 
     # dibuja texto de progreso
     if level.get_tag() == "menu":
-        position = (3000, 5000, 0)
+        position = (3000, 5000, player_coord[2] * 80)
         text_surface = font.render("Select with spacebar", True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
         text_date = pygame.image.tostring(text_surface, "RGBA", True)
         GL.glRasterPos3d(*position)
         GL.glDrawPixels(text_surface.get_width(), text_surface.get_height(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, text_date)
     elif level.get_tag() == "game":
         progress_string = str(shardcount) + "/" + str(total_shards) + " shards collected"
-        position = (3000, 2000, 0)
+        position = (3000, 2000, player_coord[2] * 80)
         text_surface = font.render(progress_string, True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
         text_date = pygame.image.tostring(text_surface, "RGBA", True)
         GL.glRasterPos3d(*position)
         GL.glDrawPixels(text_surface.get_width(), text_surface.get_height(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, text_date)
     elif level.get_tag() == "victory":
-        position = (3000, 5000, 0)
+        position = (3000, 5000, player_coord[2] * 80)
         text_surface = font.render("You beat the level!", True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
         text_date = pygame.image.tostring(text_surface, "RGBA", True)
         GL.glRasterPos3d(*position)
         GL.glDrawPixels(text_surface.get_width(), text_surface.get_height(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, text_date)
     elif level.get_tag() == "fail":
-        position = (3000, 5000, 0)
+        position = (3000, 5000, player_coord[2] * 80)
         text_surface = font.render("You fell off :(", True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
         text_date = pygame.image.tostring(text_surface, "RGBA", True)
         GL.glRasterPos3d(*position)
