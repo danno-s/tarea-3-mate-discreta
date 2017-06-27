@@ -23,7 +23,7 @@ from utils import *
 
 # Definición de constantes
 _OPENGL_CONFIGS = [False]
-DEFAULT_AMBIENT_COLOR = [0.2, 0.2, 0.2, 1.0]
+DEFAULT_AMBIENT_COLOR = [0.01, 0.01, 0.01, 1.0]
 DEFAULT_BGCOLOR = [0.0, 0.0, 0.0, 1.0]
 DEFAULT_BGDEPTH = 1.0
 DEFAULT_CONSTANT_ATTENUATION = 1.0
