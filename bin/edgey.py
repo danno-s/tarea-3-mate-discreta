@@ -13,7 +13,7 @@ from pygltoolbox.opengl_lib import *
 # function definitions
 def load_level(level_name):
     print "loading ", level_name
-    global level, shards, shardcount, total_shards, falling_tiles, pushers, options, player
+    global level, shards, shardcount, total_shards, falling_tiles, pushers, options, player, camera
     level = Level(level_name)
 
     shards = level.get_shards()
@@ -28,6 +28,8 @@ def load_level(level_name):
 
     player = Player()
     player.place(level)
+
+    camera = EdgeyCamera(player)
 
 # constants
 with open("config.json") as json_config:
@@ -66,7 +68,6 @@ font = pygame.font.Font(config["font"], 40)
 
 load_level("maps/main_menu.json")
 
-camera = EdgeyCamera(player)
 
 while(True):
     clock.tick(FPS)
@@ -76,6 +77,8 @@ while(True):
     orientation = camera.get_orientation()
     player_coord = player.get_grid_coordinates()
     obj = level.get_object_below(player_coord)
+
+    print player.is_moving()
 
     # eventos
     for event in pygame.event.get():
@@ -93,87 +96,118 @@ while(True):
                     if event.key == K_UP:
                         if not player.can_rise_neg_x(level):
                             player.move_neg_x()
+                            camera.move_neg_x()
                         else:
                             player.rise_neg_x()
+                            camera.rise_neg_x()
                     elif event.key == K_DOWN:
                         if not player.can_rise_x(level):
                             player.move_x()
+                            camera.move_x()
                         else:
                             player.rise_x()
+                            camera.rise_x()
                     elif event.key == K_LEFT:
                         if not player.can_rise_neg_y(level):
                             player.move_neg_y()
+                            camera.move_neg_y()
                         else:
                             player.rise_neg_y()
+                            camera.rise_neg_y()
                     elif event.key == K_RIGHT:
                         if not player.can_rise_y(level):
                             player.move_y()
+                            camera.move_y()
                         else:
                             player.rise_y()
+                            camera.rise_y()
                 elif orientation == 1:
                     if event.key == K_UP:
                         if not player.can_rise_y(level):
                             player.move_y()
+                            camera.move_y()
                         else:
                             player.rise_y()
+                            camera.rise_y()
                     elif event.key == K_DOWN:
                         if not player.can_rise_neg_y(level):
                             player.move_neg_y()
+                            camera.move_neg_y()
                         else:
                             player.rise_neg_y()
+                            camera.rise_neg_y()
                     elif event.key == K_LEFT:
                         if not player.can_rise_neg_x(level):
                             player.move_neg_x()
+                            camera.move_neg_x()
                         else:
                             player.rise_neg_x()
+                            camera.rise_neg_x()
                     elif event.key == K_RIGHT:
                         if not player.can_rise_x(level):
                             player.move_x()
+                            camera.move_x()
                         else:
                             player.rise_x()
+                            camera.rise_x()
                 elif orientation == 2:
                     if event.key == K_UP:
                         if not player.can_rise_x(level):
                             player.move_x()
+                            camera.move_x()
                         else:
                             player.rise_x()
+                            camera.rise_x()
                     elif event.key == K_DOWN:
                         if not player.can_rise_neg_x(level):
                             player.move_neg_x()
+                            camera.move_neg_x()
                         else:
                             player.rise_neg_x()
+                            camera.rise_neg_x()
                     elif event.key == K_LEFT:
                         if not player.can_rise_y(level):
                             player.move_y()
+                            camera.move_y()
                         else:
                             player.rise_y()
+                            camera.rise_y()
                     elif event.key == K_RIGHT:
                         if not player.can_rise_neg_y(level):
                             player.move_neg_y()
+                            camera.move_neg_y()
                         else:
                             player.rise_neg_y()
+                            camera.rise_neg_y()
                 elif orientation == 3:
                     if event.key == K_UP:
                         if not player.can_rise_neg_y(level):
                             player.move_neg_y()
+                            camera.move_neg_y()
                         else:
                             player.rise_neg_y()
+                            camera.rise_neg_y()
                     elif event.key == K_DOWN:
                         if not player.can_rise_y(level):
                             player.move_y()
+                            camera.move_y()
                         else:
                             player.rise_
                             y()
                     elif event.key == K_LEFT:
                         if not player.can_rise_x(level):
                             player.move_x()
+                            camera.move_x()
                         else:
                             player.rise_x()
+                            camera.rise_x()
                     elif event.key == K_RIGHT:
                         if not player.can_rise_neg_x(level):
                             player.move_neg_x()
+                            camera.move_neg_x()
                         else:
                             player.rise_neg_x()
+                            camera.rise_neg_x()
 
             if event.key == K_SPACE:
                 if isinstance(obj, OptionTile):
@@ -194,7 +228,7 @@ while(True):
     elif isinstance(obj, OptionTile) and not obj.highlighted():
         obj.highlight()
 
-    if player_coord[2] <= 0:
+    if player_coord[2] <= -100:
         load_level("maps/failure.json")
 
     for shard in shards:
@@ -238,7 +272,7 @@ while(True):
     # dibuja texto de progreso
     if level.get_tag() == "menu":
         position = (3000, 5000, 0)
-        text_surface = font.render("Select with the spacebar", True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
+        text_surface = font.render("Select with spacebar", True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
         text_date = pygame.image.tostring(text_surface, "RGBA", True)
         GL.glRasterPos3d(*position)
         GL.glDrawPixels(text_surface.get_width(), text_surface.get_height(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, text_date)

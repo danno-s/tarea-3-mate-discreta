@@ -113,6 +113,8 @@ class Level:
         row = coords[0]
         column = coords[1]
         height = coords[2] - 1
+        if row < 0 or column < 0 or height < 0:
+            return None
         try:
             obj = self.tilemap[row][column][height]
         except IndexError:

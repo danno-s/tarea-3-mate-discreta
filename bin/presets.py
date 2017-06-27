@@ -288,6 +288,9 @@ class Player():
             self.direction = False
             self.rising = True
 
+    def is_moving(self):
+        return self.rot_counter > 0
+
     def fall(self, coords, level):
         self.falling = True
         row = coords[0]
