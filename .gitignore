@@ -1,1 +1,8 @@
 *.pyc
+*.aux
+*.log
+*.lol
+*.lof
+*.out
+*.tex
+*.toc

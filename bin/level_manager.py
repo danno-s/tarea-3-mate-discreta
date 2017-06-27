@@ -2,7 +2,7 @@
 
 # imports
 import json as json
-from presets import Shard, BasicTile, FallingTile, PushingBlock, FinishTile
+from presets import Shard, BasicTile, FallingTile, PushingBlock, FinishTile, OptionTile
 from pygltoolbox.utils_geometry import *
 
 
@@ -12,6 +12,7 @@ class Level:
         with open(map_file) as json_map:
             map_dict = json.load(json_map)
         map_array = map_dict["levels"]
+        self.tag = map_dict["tag"]
 
         with open("config.json") as config:
             self.constants = json.load(config)["constants"]
@@ -86,6 +87,17 @@ class Level:
                                                                       column,
                                                                       level,
                                                                       side_length)
+                    elif cell // 10 == 9:
+                        # get text from the map´s json file
+                        text = map_dict["options"][cell % 10]
+                        action = map_dict["actions"][cell % 10]
+                        parameter = map_dict["parameters"][cell % 10]
+                        self.tilemap[row][column][level] = OptionTile(row,
+                                                                      column,
+                                                                      level,
+                                                                      side_length,
+                                                                      text, action,
+                                                                      parameter)
 
     def draw(self):
         for row, i in enumerate(self.tilemap):
@@ -140,8 +152,20 @@ class Level:
                         pushers.append(self.tilemap[row][column][height])
         return pushers
 
+    def get_options(self):
+        options = []
+        for row, i in enumerate(self.tilemap):
+            for column, j in enumerate(self.tilemap[row]):
+                for height, z in enumerate(self.tilemap[row][column]):
+                    if isinstance(self.tilemap[row][column][height], OptionTile):
+                        options.append(self.tilemap[row][column][height])
+        return options
+
     def remove_object_at(self, position):
         try:
             self.tilemap[position[0]][position[1]][position[2]] = None
         except:
             print "Failed to remove object"
+
+    def get_tag(self):
+        return self.tag

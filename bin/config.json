@@ -5,8 +5,7 @@
 		"theta": 60
 	},
 	"settings": {
-		"light": 1,
-		"font": "fonts/Prototype.ttf"
+		"font": "fonts/coders_crux.ttf"
 	},
 	"constants": {
 		"side_length": 80,

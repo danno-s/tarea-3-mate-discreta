@@ -2,8 +2,11 @@
 from pygltoolbox.particles import *
 from pygltoolbox.figures import *
 from pygltoolbox.materials import *
+import pygame.font as fonts
+import pygame.image as image
 import json as json
 from random import random
+from OpenGL import GL
 
 
 class Player():
@@ -822,3 +825,127 @@ class FinishTile:
                   None,
                   self.tile.get_property("SIZE"),
                   None)
+
+
+class OptionTile:
+    def __init__(self, row, column, level, side_length, text, action, parameter):
+        self.side_length = side_length
+        self.tile = Particle(row * side_length,
+                             column * side_length,
+                             level * side_length)
+        self.tile.add_property("GLLIST", create_cube())
+        self.tile.add_property("SIZE", [side_length / 2,
+                                        side_length / 2,
+                                        side_length / 2])
+        self.tile.add_property("MATERIAL", material_finish_tile)
+
+        with open("config.json") as json_config:
+            config = json.load(json_config)
+
+        font_location = config["settings"]["font"]
+        self.highlight_frames = config["constants"]["move_frames"]
+        self.highlight_progress = 0
+        self.highlighting = None
+        self.red_speed = 42.0 / self.highlight_frames
+        self.green_speed = 200.0 / self.highlight_frames
+        self.blue_speed = 229.0 / self.highlight_frames
+
+        self.text = text
+        self.action = action
+        self.param = parameter
+
+        self.font = fonts.Font(font_location, 40)
+        self.red_color = 0.0
+        self.green_color = 0.0
+        self.blue_color = 0.0
+        text_surface = self.font.render(self.text, True, (self.red_color, self.green_color, self.blue_color, 255), (210, 224, 224, 0))
+        self.text_width = text_surface.get_width()
+        self.text_height = text_surface.get_height()
+        self.text_data = image.tostring(text_surface, "RGBA", True)
+        self.position = (row * side_length - self.text_width, column * side_length - self.text_height, level * side_length + 500)
+
+    def set_name(self, name):
+        self.tile.set_name(name)
+
+    def get_name(self):
+        return self.tile.get_name()
+
+    def get_x(self):
+        return self.tile.get_x()
+
+    def get_y(self):
+        return self.tile.get_y()
+
+    def get_z(self):
+        return self.tile.get_z()
+
+    def get_action(self):
+        return self.action
+
+    def get_param(self):
+        return self.param
+
+    def get_grid_coordinates(self):
+        height = self.get_z() / self.side_length
+        column = self.get_y() / self.side_length
+        row = self.get_x() / self.side_length
+        return [int(row), int(column), int(height)]
+
+    def update(self, player):
+        if self.highlight_progress > 0 and self.highlighting:
+            self.red_color += self.red_speed
+            self.red_color = min(255.0, self.red_color)
+            self.green_color += self.green_speed
+            self.green_color = min(255.0, self.green_color)
+            self.blue_color += self.blue_speed
+            self.blue_color = min(255.0, self.blue_color)
+            text_surface = self.font.render(self.text, True, (self.red_color, self.green_color, self.blue_color, 255), (210, 224, 224, 0))
+            self.text_data = image.tostring(text_surface, "RGBA", True)
+            self.highlight_progress -= 1
+
+        elif self.highlight_progress > 0 and not self.highlighting:
+            self.red_color -= self.red_speed
+            self.red_color = max(0.0, self.red_color)
+            self.green_color -= self.green_speed
+            self.green_color = max(0.0, self.green_color)
+            self.blue_color -= self.blue_speed
+            self.blue_color = max(0.0, self.blue_color)
+            text_surface = self.font.render(self.text, True, (self.red_color, self.green_color, self.blue_color, 255), (210, 224, 224, 0))
+            self.text_data = image.tostring(text_surface, "RGBA", True)
+            self.highlight_progress -= 1
+
+        player_coords = player.get_grid_coordinates()
+        tile_coord = self.get_grid_coordinates()
+        target = [tile_coord[0], tile_coord[1], tile_coord[2] + 1]
+        if target != player_coords and self.highlighting:
+            self.dehighlight()
+
+    def highlight(self):
+        self.highlight_progress = self.highlight_frames - self.highlight_progress
+        self.highlighting = True
+
+    def dehighlight(self):
+        self.highlight_progress = self.highlight_frames - self.highlight_progress
+        self.highlighting = False
+
+    def highlighted(self):
+        return self.highlighting
+
+    def draw(self):
+        self.tile.exec_property_func("MATERIAL")
+        draw_list(self.tile.get_property("GLLIST"),
+                  self.tile.get_position_list(),
+                  0,
+                  None,
+                  self.tile.get_property("SIZE"),
+                  None)
+
+        glRasterPos3d(*self.position)
+        glDrawPixels(self.text_width, self.text_height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, self.text_data)
+
+        glLineWidth(2.5)
+        glColor3f(0.0, 0.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(self.get_x(), self.get_y(), self.get_z())
+        glVertex3f(self.position[0], self.position[1], self.position[2])
+        glEnd()

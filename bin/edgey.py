@@ -2,12 +2,32 @@
 
 # imports
 import json as json
-from presets import Player, FallingTile, FinishTile
-from text_handler import drawText as draw_text
+from OpenGL import GL
+from presets import Player, FallingTile, FinishTile, OptionTile
 from level_manager import Level
 from edgey_camera import EdgeyCamera
 from pygltoolbox.glpython import *
 from pygltoolbox.opengl_lib import *
+
+
+# function definitions
+def load_level(level_name):
+    print "loading ", level_name
+    global level, shards, shardcount, total_shards, falling_tiles, pushers, options, player
+    level = Level(level_name)
+
+    shards = level.get_shards()
+    shardcount = 0
+    total_shards = len(shards)
+
+    falling_tiles = level.get_fallers()
+
+    pushers = level.get_pushers()
+
+    options = level.get_options()
+
+    player = Player()
+    player.place(level)
 
 # constants
 with open("config.json") as json_config:
@@ -18,8 +38,18 @@ config = config_dict["settings"]
 FPS = config_dict["display_constants"]["fps"]
 WINDOW_SIZE = config_dict["display_constants"]["dimensions"]
 
+
+# function definitions
+def switch_display_mode(objective):
+    if objective == "main_menu" or objective == "game_over":
+        pygame.display.set_mode([WINDOW_SIZE[0], WINDOW_SIZE[1]], OPENGLBLIT | DOUBLEBUF)
+    elif objective == "game":
+        pygame.display.set_mode([WINDOW_SIZE[0], WINDOW_SIZE[1]])
+
+
 # init
-initPygame(WINDOW_SIZE[0], WINDOW_SIZE[1], "Edgey", centered=True)
+icon = pygame.image.load("textures/icon.png")
+initPygame(WINDOW_SIZE[0], WINDOW_SIZE[1], "Edgey", centered=True, icon=icon)
 initGl(transparency=False, materialcolor=False, normalized=True, lighting=True,
        numlights=1,
        perspectivecorr=True, antialiasing=True, depth=True, smooth=True,
@@ -28,33 +58,15 @@ reshape(*WINDOW_SIZE)
 initLight(GL_LIGHT0)
 glClearColor(210.0 / 255, 224.0 / 255, 224.0 / 255, 1.0)
 
-
 clock = pygame.time.Clock()
 
 surface = pygame.display.get_surface()
 
-# carga inicial
 font = pygame.font.Font(config["font"], 40)
 
-level = Level("maps/flat.json")
+load_level("maps/main_menu.json")
 
-shards = level.get_shards()
-shardcount = 0
-total_shards = len(shards)
-
-falling_tiles = level.get_fallers()
-
-pushers = level.get_pushers()
-
-# crea y ubica al jugador en el nivel
-player = Player()
-player.place(level)
-
-# crea cámara
 camera = EdgeyCamera(player)
-
-frame = 0
-print "Main loop started"
 
 while(True):
     clock.tick(FPS)
@@ -62,6 +74,8 @@ while(True):
     camera.place()
 
     orientation = camera.get_orientation()
+    player_coord = player.get_grid_coordinates()
+    obj = level.get_object_below(player_coord)
 
     # eventos
     for event in pygame.event.get():
@@ -71,116 +85,117 @@ while(True):
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 exit()
-            elif event.key == K_q:
-                camera.gradual_rotateLeft()
-            elif event.key == K_e:
-                camera.gradual_rotateRight()
 
             # relative movements
             # mata de codigo, cuidado al entrar
             if not player.is_falling():
                 if orientation == 0:
-                    if event.key == K_w:
+                    if event.key == K_UP:
                         if not player.can_rise_neg_x(level):
                             player.move_neg_x()
                         else:
                             player.rise_neg_x()
-                    elif event.key == K_s:
+                    elif event.key == K_DOWN:
                         if not player.can_rise_x(level):
                             player.move_x()
                         else:
                             player.rise_x()
-                    elif event.key == K_a:
+                    elif event.key == K_LEFT:
                         if not player.can_rise_neg_y(level):
                             player.move_neg_y()
                         else:
                             player.rise_neg_y()
-                    elif event.key == K_d:
+                    elif event.key == K_RIGHT:
                         if not player.can_rise_y(level):
                             player.move_y()
                         else:
                             player.rise_y()
                 elif orientation == 1:
-                    if event.key == K_w:
+                    if event.key == K_UP:
                         if not player.can_rise_y(level):
                             player.move_y()
                         else:
                             player.rise_y()
-                    elif event.key == K_s:
+                    elif event.key == K_DOWN:
                         if not player.can_rise_neg_y(level):
                             player.move_neg_y()
                         else:
                             player.rise_neg_y()
-                    elif event.key == K_a:
+                    elif event.key == K_LEFT:
                         if not player.can_rise_neg_x(level):
                             player.move_neg_x()
                         else:
                             player.rise_neg_x()
-                    elif event.key == K_d:
+                    elif event.key == K_RIGHT:
                         if not player.can_rise_x(level):
                             player.move_x()
                         else:
                             player.rise_x()
                 elif orientation == 2:
-                    if event.key == K_w:
+                    if event.key == K_UP:
                         if not player.can_rise_x(level):
                             player.move_x()
                         else:
                             player.rise_x()
-                    elif event.key == K_s:
+                    elif event.key == K_DOWN:
                         if not player.can_rise_neg_x(level):
                             player.move_neg_x()
                         else:
                             player.rise_neg_x()
-                    elif event.key == K_a:
+                    elif event.key == K_LEFT:
                         if not player.can_rise_y(level):
                             player.move_y()
                         else:
                             player.rise_y()
-                    elif event.key == K_d:
+                    elif event.key == K_RIGHT:
                         if not player.can_rise_neg_y(level):
                             player.move_neg_y()
                         else:
                             player.rise_neg_y()
                 elif orientation == 3:
-                    if event.key == K_w:
+                    if event.key == K_UP:
                         if not player.can_rise_neg_y(level):
                             player.move_neg_y()
                         else:
                             player.rise_neg_y()
-                    elif event.key == K_s:
+                    elif event.key == K_DOWN:
                         if not player.can_rise_y(level):
                             player.move_y()
                         else:
                             player.rise_
                             y()
-                    elif event.key == K_a:
+                    elif event.key == K_LEFT:
                         if not player.can_rise_x(level):
                             player.move_x()
                         else:
                             player.rise_x()
-                    elif event.key == K_d:
+                    elif event.key == K_RIGHT:
                         if not player.can_rise_neg_x(level):
                             player.move_neg_x()
                         else:
                             player.rise_neg_x()
 
+            if event.key == K_SPACE:
+                if isinstance(obj, OptionTile):
+                    if obj.get_action() == "load":
+                        load_level(obj.get_param())
+                    elif obj.get_action() == "quit":
+                        exit()
+
     keys = pygame.key.get_pressed()
 
     # lógica del nivel
-    player_coord = player.get_grid_coordinates()
-
-    obj = level.get_object_below(player_coord)
     if obj is None:
         player.fall(player_coord, level)
     elif isinstance(obj, FallingTile):
         obj.fall()
     elif isinstance(obj, FinishTile) and shardcount == total_shards:
-        print "player victory"
-    print shardcount, total_shards
+        load_level("maps/victory.json")
+    elif isinstance(obj, OptionTile) and not obj.highlighted():
+        obj.highlight()
 
     if player_coord[2] <= 0:
-        print "player dead"
+        load_level("maps/failure.json")
 
     for shard in shards:
         if shard.get_grid_coordinates() == player_coord:
@@ -207,6 +222,9 @@ while(True):
     for pusher in pushers:
         pusher.update()
 
+    for option in options:
+        option.update(player)
+
     # dibuja luces
     glLightfv(GL_LIGHT0, GL_POSITION, [-1000, -250, 1000])
 
@@ -217,10 +235,33 @@ while(True):
     for shard in shards:
         shard.draw()
 
-    player.draw()
+    # dibuja texto de progreso
+    if level.get_tag() == "menu":
+        position = (3000, 5000, 0)
+        text_surface = font.render("Select with the spacebar", True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
+        text_date = pygame.image.tostring(text_surface, "RGBA", True)
+        GL.glRasterPos3d(*position)
+        GL.glDrawPixels(text_surface.get_width(), text_surface.get_height(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, text_date)
+    elif level.get_tag() == "game":
+        progress_string = str(shardcount) + "/" + str(total_shards) + " shards collected"
+        position = (3000, 2000, 0)
+        text_surface = font.render(progress_string, True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
+        text_date = pygame.image.tostring(text_surface, "RGBA", True)
+        GL.glRasterPos3d(*position)
+        GL.glDrawPixels(text_surface.get_width(), text_surface.get_height(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, text_date)
+    elif level.get_tag() == "victory":
+        position = (3000, 5000, 0)
+        text_surface = font.render("You beat the level!", True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
+        text_date = pygame.image.tostring(text_surface, "RGBA", True)
+        GL.glRasterPos3d(*position)
+        GL.glDrawPixels(text_surface.get_width(), text_surface.get_height(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, text_date)
+    elif level.get_tag() == "fail":
+        position = (3000, 5000, 0)
+        text_surface = font.render("You fell off :(", True, (0.0, 0.0, 0.0, 255), (210, 224, 224, 0))
+        text_date = pygame.image.tostring(text_surface, "RGBA", True)
+        GL.glRasterPos3d(*position)
+        GL.glDrawPixels(text_surface.get_width(), text_surface.get_height(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, text_date)
 
-    # dibuja texto
-    progress_string = str(shardcount) + "/" + str(total_shards) + " shards collected"
-    shard_progress = font.render(progress_string, True, (0.0, 0.0, 0.0))
+    player.draw()
 
     pygame.display.flip()
