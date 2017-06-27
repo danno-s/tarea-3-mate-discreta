@@ -40,15 +40,6 @@ config = config_dict["settings"]
 FPS = config_dict["display_constants"]["fps"]
 WINDOW_SIZE = config_dict["display_constants"]["dimensions"]
 
-
-# function definitions
-def switch_display_mode(objective):
-    if objective == "main_menu" or objective == "game_over":
-        pygame.display.set_mode([WINDOW_SIZE[0], WINDOW_SIZE[1]], OPENGLBLIT | DOUBLEBUF)
-    elif objective == "game":
-        pygame.display.set_mode([WINDOW_SIZE[0], WINDOW_SIZE[1]])
-
-
 # init
 icon = pygame.image.load("textures/icon.png")
 initPygame(WINDOW_SIZE[0], WINDOW_SIZE[1], "Edgey", centered=True, icon=icon)
@@ -77,8 +68,6 @@ while(True):
     orientation = camera.get_orientation()
     player_coord = player.get_grid_coordinates()
     obj = level.get_object_below(player_coord)
-
-    print player.is_moving()
 
     # eventos
     for event in pygame.event.get():
