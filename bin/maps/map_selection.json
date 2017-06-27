@@ -12,8 +12,8 @@
 			[ 0,  0,  0,  0,  0,  0,  0,  0,  0]
 		]
 	],
-	"options": ["Flat", "Bowl", "Stairs", "Rings", "Return"],
+	"options": ["Flat", "Bowl", "Loop", "Rings", "Return"],
 	"actions": ["load", "load", "load", "load", "load"],
-	"parameters": ["maps/flat.json", "maps/bowl.json", "maps/stairs.json", "maps/rings.json", "maps/main_menu.json"],
+	"parameters": ["maps/flat.json", "maps/bowl.json", "maps/loop.json", "maps/rings.json", "maps/main_menu.json"],
 	"tag": "menu"
 }

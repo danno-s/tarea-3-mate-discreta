@@ -205,7 +205,7 @@
 	El problema planteado trataba sobre realizar un clon del juego EDGE Extended. El jugador controla un cubo, el cual se puede mover en 4 direcciones rotando sobre sus aristas. Además el jugador puede escalar hasta un cubo de altura sobre su nivel actual. La cámara sigue al jugador mientras se mueve por el nivel. Este juego debía incluír prismas, plataformas que se caen luego de que el jugador las pise y plataformas que empujan al jugador cuando él camine frente a ellas. Cuando el jugador colecciona todos los prismas y se para sobre la meta, se termina el nivel.
 
 \section{Solución}
-	El juego fue programado en \verb!Python 2.7!, usando las librerías \verb!pygame! y \verb!PyOpenGL!. Además se usaron algunas funciones del paquete \verb!pygltoolbox! creado por Pablo Pizarro R. Para almacenar las constantes del juego se utilizaron archivos \verb!.json!. Los archivos \verb!.py! principales son:
+	El juego fue programado en \verb!Python 2.7!, usando las librerías \verb!pygame! y \verb!PyOpenGL!. Además se usaron algunas funciones del paquete \verb!pygltoolbox! creado por Pablo Pizarro R. Para almacenar las constantes del juego se utilizaron archivos \verb!.json!. La tarea se desarrolló completamente usando \verb!git! en el repositorio \url{https://github.com/danno-s/tarea-3-modelacion-grafica}. Los archivos \verb!.py! principales son:
 	\begin{itemize}
 		\item \verb!edgey.py!:
 		Este archivo es el que se encarga de inicializar las líbrerías utilizadas, toda la lógica del juego y dibujar en pantalla los objetos del modelo. Junto a la clase \verb!EdgeyCamera!, recibe input del teclado y define direcciones de movimiento del jugador dependiendo de la posición de la cámara.
