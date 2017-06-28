@@ -82,7 +82,7 @@ while(True):
 
             # relative movements
             # mata de codigo, cuidado al entrar
-            if not player.is_falling():
+            if not player.is_falling() and not player.is_moving():
                 if orientation == 0:
                     if event.key == K_UP:
                         if not player.can_rise_neg_x(level):

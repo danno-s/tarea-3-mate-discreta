@@ -834,6 +834,7 @@ class FinishTile:
         self.tile.modify_property("MATERIAL", material_active_finish_tile)
         self.activated = True
 
+
 class OptionTile:
     def __init__(self, row, column, level, side_length, text, action, parameter):
         self.side_length = side_length
