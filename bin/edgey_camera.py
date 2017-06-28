@@ -96,8 +96,8 @@ class EdgeyCamera():
                 self.moving = False
                 self.rising = False
 
-        #if not self.player.is_moving():
-         #   self.center = [self.player.get_x(), self.player.get_y(), self.player.get_z()]
+        if not self.player.is_moving():
+            self.center = [self.player.get_x(), self.player.get_y(), self.player.get_z()]
 
 
     def place(self):
