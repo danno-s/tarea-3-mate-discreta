@@ -14,6 +14,6 @@
 	],
 	"options": ["SandBox", "Level Select", "Exit"],
 	"actions": ["load", "load", "quit"],
-	"parameters": ["maps/map_selection.json", "maps/level_selection.json", ""],
+	"parameters": ["maps/sandbox.json", "maps/level_selection.json", ""],
 	"tag": "menu"
 }

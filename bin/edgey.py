@@ -3,7 +3,7 @@
 # imports
 import json as json
 from OpenGL import GL
-from presets import Player, FallingTile, FinishTile, OptionTile
+from presets import Player, FallingTile, FinishTile, OptionTile, Shard
 from level_manager import Level
 from edgey_camera import EdgeyCamera
 from pygltoolbox.glpython import *
@@ -79,6 +79,10 @@ while(True):
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 exit()
+            if event.key == K_q:
+                camera.gradual_rotateLeft()
+            if event.key == K_e:
+                camera.gradual_rotateRight()
 
             # relative movements
             # mata de codigo, cuidado al entrar
@@ -183,8 +187,8 @@ while(True):
                             player.move_y()
                             camera.move_y()
                         else:
-                            player.rise_
-                            y()
+                            player.rise_y()
+                            camera.rise_y()
                     elif event.key == K_LEFT:
                         if not player.can_rise_x(level):
                             player.move_x()
@@ -210,9 +214,10 @@ while(True):
     keys = pygame.key.get_pressed()
 
     # lógica del nivel
-    if obj is None:
+    if obj is None or isinstance(obj, Shard) or (isinstance(obj, FallingTile) and not obj.stable and obj.stable is not None):
         player.fall(player_coord, level)
-    elif isinstance(obj, FallingTile):
+
+    if isinstance(obj, FallingTile):
         obj.fall()
     elif isinstance(obj, FinishTile) and shardcount == total_shards:
         load_level("maps/victory.json")
@@ -223,12 +228,12 @@ while(True):
         for finish in finishes:
             finish.activate()
 
-
     if player_coord[2] <= -100:
         load_level("maps/failure.json")
 
     for shard in shards:
         if shard.get_grid_coordinates() == player_coord:
+            level.remove_object_at(shard.get_grid_coordinates())
             shards.remove(shard)
             shardcount += 1
 

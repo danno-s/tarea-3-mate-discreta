@@ -7,13 +7,13 @@
 			[ 0,  0,  1,  1,  1,  1,  1,  0,  0],
 			[ 0,  0,  1,  1, -1,  1,  1,  0,  0],
 			[ 0,  0,  1,  1,  1,  1,  1,  0,  0],
-			[ 0,  0,  1,  1,  1,  1,  1,  0,  0],
+			[ 0,  0,  1,  1,  1,  1, 91,  0,  0],
 			[ 0,  0,  0,  0,  0,  0,  0,  0,  0],
 			[ 0,  0,  0,  0,  0,  0,  0,  0,  0]
 		]
 	],
-	"options": ["Continue"],
-	"actions": ["load"],
-	"parameters": ["maps/level_selection.json"],
+	"options": ["Continue", "Main Menu"],
+	"actions": ["load", "load"],
+	"parameters": ["maps/level_selection.json", "maps/main_menu.json"],
 	"tag": "fail"
 }

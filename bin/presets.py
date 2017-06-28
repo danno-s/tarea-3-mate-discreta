@@ -297,7 +297,10 @@ class Player():
         column = coords[1]
         for height in xrange(coords[2], -1, -1):
             tile = level.get_object_at([row, column, height])
-            if tile is not None:
+            if isinstance(tile, FallingTile):
+                self.ground = tile.get_z() + self.side_length * 6 / 10
+                return
+            elif tile is not None:
                 self.ground = tile.get_z() + self.side_length
                 return
         self.ground = -sys.maxint - 1
@@ -311,6 +314,7 @@ class Player():
         try:
             if (
                 isinstance(level.get_object_at(coord), BasicTile) or
+                isinstance(level.get_object_at(coord), FinishTile) or
                 isinstance(level.get_object_at(coord), FallingTile) or
                 isinstance(level.get_object_at(coord), PushingBlock)
             ):
@@ -325,6 +329,7 @@ class Player():
         try:
             if (
                 isinstance(level.get_object_at(coord), BasicTile) or
+                isinstance(level.get_object_at(coord), FinishTile) or
                 isinstance(level.get_object_at(coord), FallingTile) or
                 isinstance(level.get_object_at(coord), PushingBlock)
             ):
@@ -339,6 +344,7 @@ class Player():
         try:
             if (
                 isinstance(level.get_object_at(coord), BasicTile) or
+                isinstance(level.get_object_at(coord), FinishTile) or
                 isinstance(level.get_object_at(coord), FallingTile) or
                 isinstance(level.get_object_at(coord), PushingBlock)
             ):
@@ -353,6 +359,7 @@ class Player():
         try:
             if (
                 isinstance(level.get_object_at(coord), BasicTile) or
+                isinstance(level.get_object_at(coord), FinishTile) or
                 isinstance(level.get_object_at(coord), FallingTile) or
                 isinstance(level.get_object_at(coord), PushingBlock)
             ):
@@ -553,7 +560,7 @@ class FallingTile:
         tile_coord = self.get_grid_coordinates()
         above_tile = [tile_coord[0], tile_coord[1], tile_coord[2] + 1]
 
-        if player_coord != above_tile:
+        if player_coord != above_tile and player_coord != tile_coord:
             self.stable = False
 
     def is_deletable(self):
